@@ -1,0 +1,26 @@
+{
+  "name": "complement-guide",
+  "type": "module",
+  "version": "0.0.1",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "prebuild": "node scripts/maillage-interne.mjs",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.93.0",
+    "@astrojs/sitemap": "^3.7.2",
+    "@astrojs/vercel": "^10.0.6",
+    "@octokit/rest": "^22.0.1",
+    "@vercel/analytics": "^2.0.1",
+    "astro": "^6.2.1"
+  },
+  "devDependencies": {
+    "sharp": "^0.34.5"
+  }
+}

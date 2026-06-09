@@ -1,0 +1,259 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { articles, complements } from '../../data/articles';
+
+export async function getStaticPaths() {
+  return articles.map(a => ({ params: { slug: a.slug }, props: { article: a } }));
+}
+
+const { article } = Astro.props;
+const complement = complements.find(c => c.slug === article.complement ||
+  c.nom.toLowerCase() === article.complement.toLowerCase());
+
+const typeLabels: Record<string, string> = {
+  comparatif: 'Comparatif',
+  conseil: 'Conseil',
+  test: 'Test & Avis',
+  'code-promo': 'Code Promo',
+};
+
+const dateFormatted = new Date(article.date).toLocaleDateString('fr-FR', {
+  day: 'numeric', month: 'long', year: 'numeric'
+});
+const updatedFormatted = article.updated
+  ? new Date(article.updated).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })
+  : null;
+
+const relatedArticles = articles
+  .filter(a => a.slug !== article.slug && a.complement === article.complement)
+  .slice(0, 3);
+
+const articleLD = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: article.titre,
+  description: article.extrait,
+  datePublished: article.date,
+  dateModified: article.updated ?? new Date().toISOString().split('T')[0],
+  author: {
+    '@type': 'Person',
+    name: 'La Rédaction EDP Nutrition',
+    url: '/qui-sommes-nous',
+  },
+  publisher: {
+    '@type': 'Organization',
+    name: 'EDP Nutrition',
+    url: 'https://monsite.fr',
+  },
+};
+
+const breadcrumbLD = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Accueil', item: 'https://monsite.fr' },
+    { '@type': 'ListItem', position: 2, name: article.complement, item: `https://monsite.fr/complement/${article.complement}` },
+    { '@type': 'ListItem', position: 3, name: article.titre },
+  ],
+};
+---
+
+<Layout
+  title={`${article.titre} — EDP Nutrition`}
+  description={article.extrait}
+  ogType="article"
+  canonicalOverride={article.canonical}
+  noindex={!!article.canonical}
+  jsonLd={[articleLD, breadcrumbLD]}
+>
+  <div class="article-page">
+    <div class="container">
+
+      <!-- Breadcrumb -->
+      <nav class="breadcrumb" aria-label="Fil d'Ariane">
+        <a href="/">Accueil</a>
+        <span>›</span>
+        {complement && <><a href={`/complement/${complement.slug}`}>{complement.nom}</a><span>›</span></>}
+        <span>{article.titre}</span>
+      </nav>
+
+      <div class="article-layout">
+        <!-- Main content -->
+        <article class="article-main">
+          <!-- Header -->
+          <header class="article-header">
+            <div class="article-header__tags">
+              <span class={`card__tag ${article.type === 'conseil' ? 'card__tag--blue' : ''}`}>
+                {typeLabels[article.type] ?? article.type}
+              </span>
+              {article.objectif && <span class="card__tag card__tag--blue">{article.objectif}</span>}
+            </div>
+            <h1 class="article-header__title">{article.titre}</h1>
+            <div class="article-header__meta">
+              <span>Par la rédaction EDP Nutrition</span>
+              <span>·</span>
+              <time datetime={article.date}>{dateFormatted}</time>
+              {updatedFormatted && (
+                <><span>·</span><span class="article-meta__updated">Mis à jour le {updatedFormatted}</span></>
+              )}
+              <span>·</span>
+              <span>{article.duree} de lecture</span>
+            </div>
+            <p class="article-header__intro">{article.extrait}</p>
+          </header>
+
+          <!-- Content -->
+          {article.contenu_html && (
+            <div class="article-content" set:html={article.contenu_html} />
+          )}
+
+          <!-- Author box -->
+          <div class="author-box">
+            <div class="author-box__avatar">EDP</div>
+            <div class="author-box__name">La Rédaction EDP Nutrition</div>
+            <div class="author-box__role">Experts en compléments alimentaires</div>
+            <p class="author-box__bio">Notre équipe est composée de naturopathes, diététiciens et coaches sportifs spécialisés en micronutrition. Tous nos articles sont basés sur des études scientifiques et mis à jour régulièrement.</p>
+            <a href="/qui-sommes-nous" class="btn btn--blue" style="margin-top:8px">En savoir plus sur notre équipe</a>
+          </div>
+        </article>
+
+        <!-- Sidebar -->
+        <aside class="article-sidebar">
+          {complement && (
+            <div class="sidebar-box">
+              <h3 class="sidebar-box__title">Guide complet</h3>
+              <a href={`/complement/${complement.slug}`} class="sidebar-complement-link">
+                <strong>{complement.nom}</strong>
+                <p>{complement.description}</p>
+                <span class="sidebar-complement-link__cta">Voir le guide complet →</span>
+              </a>
+            </div>
+          )}
+
+          {article.marque_produit && article.marque_lien && (
+            <div class="sidebar-box sidebar-box--cta">
+              <h3 class="sidebar-box__title">Notre sélection</h3>
+              <p class="sidebar-box__desc">{article.marque_description ?? `Découvrez ${article.marque_produit}`}</p>
+              <a href={article.marque_lien} class="btn btn--primary" target="_blank" rel="noopener sponsored" style="width:100%;justify-content:center;">
+                Voir le produit →
+              </a>
+            </div>
+          )}
+
+          {relatedArticles.length > 0 && (
+            <div class="sidebar-box">
+              <h3 class="sidebar-box__title">Articles similaires</h3>
+              <div class="sidebar-related">
+                {relatedArticles.map(a => (
+                  <a href={`/articles/${a.slug}`} class="sidebar-related__item">
+                    <span class="sidebar-related__tag">{typeLabels[a.type]}</span>
+                    <span class="sidebar-related__title">{a.titre}</span>
+                  </a>
+                ))}
+              </div>
+            </div>
+          )}
+        </aside>
+      </div>
+
+    </div>
+  </div>
+</Layout>
+
+<style>
+.article-page { padding: 32px 0 64px; }
+
+.article-layout {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 48px;
+  align-items: start;
+}
+@media (max-width: 1024px) {
+  .article-layout { grid-template-columns: 1fr; }
+  .article-sidebar { display: none; }
+}
+
+.article-header { margin-bottom: 32px; }
+.article-header__tags { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+.article-header__title {
+  font-size: 38px;
+  font-weight: 800;
+  line-height: 1.15;
+  margin-bottom: 16px;
+  color: var(--color-text);
+}
+.article-header__meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  font-size: 14px;
+  color: var(--color-text-light);
+  margin-bottom: 20px;
+}
+.article-meta__updated { color: #16A34A; font-weight: 500; }
+.article-header__intro {
+  font-size: 18px;
+  color: var(--color-text-light);
+  line-height: 1.65;
+  padding: 20px 24px;
+  background: var(--color-section-bg);
+  border-radius: var(--radius-box);
+  border-left: 4px solid var(--color-cta);
+}
+
+@media (max-width: 768px) {
+  .article-header__title { font-size: 28px; }
+}
+
+/* Author box */
+.author-box__avatar {
+  width: 64px;
+  height: 64px;
+  background: var(--color-text);
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-heading);
+  font-size: 14px;
+  font-weight: 700;
+  margin: 0 auto 16px;
+}
+
+/* Sidebar */
+.article-sidebar { position: sticky; top: 88px; display: flex; flex-direction: column; gap: 20px; }
+.sidebar-box {
+  background: var(--color-white);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  padding: 20px;
+}
+.sidebar-box--cta {
+  background: linear-gradient(135deg, #FFF7F5 0%, #FFF0EB 100%);
+  border-color: #FFD5C8;
+}
+.sidebar-box__title {
+  font-family: var(--font-heading);
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--color-text-light);
+  margin-bottom: 14px;
+}
+.sidebar-box__desc { font-size: 14px; color: var(--color-text-body); margin-bottom: 14px; line-height: 1.5; }
+
+.sidebar-complement-link { display: block; text-decoration: none; }
+.sidebar-complement-link strong { font-family: var(--font-heading); font-size: 16px; color: var(--color-text); display: block; margin-bottom: 6px; }
+.sidebar-complement-link p { font-size: 13px; color: var(--color-text-light); line-height: 1.5; margin-bottom: 10px; }
+.sidebar-complement-link__cta { font-size: 13px; font-weight: 600; color: var(--color-accent); }
+
+.sidebar-related { display: flex; flex-direction: column; gap: 12px; }
+.sidebar-related__item { text-decoration: none; display: flex; flex-direction: column; gap: 4px; }
+.sidebar-related__tag { font-size: 11px; font-weight: 700; font-family: var(--font-heading); color: var(--color-cta); text-transform: uppercase; letter-spacing: 0.5px; }
+.sidebar-related__title { font-size: 14px; font-weight: 600; color: var(--color-text); line-height: 1.4; transition: color var(--transition); }
+.sidebar-related__item:hover .sidebar-related__title { color: var(--color-accent); }
+</style>

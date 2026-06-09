@@ -1,0 +1,49 @@
+# Guide Tendinites
+
+> Guide francophone de référence sur les tendinites : symptômes, causes, traitements et prévention.
+> Édité par Thomas Mercier. Contenu validé sur la base des recommandations HAS, Ameli, INRS et SFMES.
+> Site indépendant à destination du grand public francophone.
+
+## Pages principales
+
+- [Accueil](https://guide-tendinites.fr/) : portail par zone du corps
+- [Tous les articles](https://guide-tendinites.fr/articles) : articles groupés par zone
+- [Traitements](https://guide-tendinites.fr/traitements) : 6 traitements prouvés des tendinites
+- [Auteur](https://guide-tendinites.fr/auteur) : Thomas Mercier, éditeur spécialisé santé du sport
+
+## Guides par zone du corps (symptômes)
+
+- [Tendinite de l'épaule](https://guide-tendinites.fr/symptomes/epaule) : coiffe des rotateurs, conflit sous-acromial
+- [Tendinite du coude](https://guide-tendinites.fr/symptomes/coude) : épicondylite latérale, tennis elbow
+- [Tendinite du genou](https://guide-tendinites.fr/symptomes/genou) : tendinite rotulienne, syndrome de l'essuie-glace
+- [Tendinite du poignet](https://guide-tendinites.fr/symptomes/poignet) : De Quervain, syndrome de la souris
+- [Tendinite de la hanche](https://guide-tendinites.fr/symptomes/hanche) : trochantérite, psoas-iliaque
+- [Tendinite de la cheville](https://guide-tendinites.fr/symptomes/cheville) : tibial postérieur, péroniers
+- [Tendinite du pied](https://guide-tendinites.fr/symptomes/pied) : fasciite plantaire, épine calcanéenne
+- [Tendinite d'Achille](https://guide-tendinites.fr/symptomes/achille) : corporéale vs insertionnelle
+
+## Guides traitements par pathologie
+
+- [Traitement tendinite épaule](https://guide-tendinites.fr/traitements/epaule)
+- [Traitement épicondylite (coude)](https://guide-tendinites.fr/traitements/coude)
+- [Traitement tendinite genou](https://guide-tendinites.fr/traitements/genou)
+- [Traitement tendinite poignet](https://guide-tendinites.fr/traitements/poignet)
+- [Traitement trochantérite (hanche)](https://guide-tendinites.fr/traitements/hanche)
+- [Traitement tendinite cheville](https://guide-tendinites.fr/traitements/cheville)
+- [Traitement fasciite plantaire (pied)](https://guide-tendinites.fr/traitements/pied)
+- [Traitement tendinite d'Achille](https://guide-tendinites.fr/traitements/achille)
+
+## Articles récents (mis à jour automatiquement)
+
+Les articles sont publiés plusieurs fois par semaine sur des angles spécifiques :
+durée de guérison, symptômes précoces, différences entre pathologies, exercices excentriques,
+facteurs de risque, retour au sport. Voir la liste complète sur /articles.
+
+## Informations éditoriales
+
+- Fréquence de publication : 4 articles par semaine
+- Mise à jour éditoriale : hebdomadaire (articles anciens enrichis)
+- Sources utilisées : HAS, Ameli, INRS, SFMES, SOFCOT, NCBI, Inserm, Vidal
+- Langue : français (France)
+- Public cible : adultes francophones souffrant de douleurs tendineuses
+- Contact : contact@guide-tendinites.fr

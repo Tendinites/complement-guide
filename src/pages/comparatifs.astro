@@ -1,0 +1,34 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { articles } from '../data/articles';
+
+const comparatifs = articles.filter(a => a.type === 'comparatif');
+---
+
+<Layout
+  title="Comparatifs de compléments alimentaires — EDP Nutrition"
+  description="Nos comparatifs indépendants des meilleurs compléments alimentaires : oméga 3, magnésium, vitamine D, whey, créatine et plus. Testés et approuvés par nos experts."
+>
+  <div class="page container" style="padding:40px 0 80px">
+    <h1 style="font-size:40px;font-weight:800;margin-bottom:12px">Comparatifs</h1>
+    <p style="font-size:18px;color:var(--color-text-light);margin-bottom:40px">Nos sélections des meilleurs compléments par catégorie, mises à jour régulièrement.</p>
+    {comparatifs.length > 0 ? (
+      <div class="grid-3">
+        {comparatifs.map(a => (
+          <a href={`/articles/${a.slug}`} class="card">
+            <div class="card__body">
+              <span class="card__tag">Comparatif</span>
+              <div class="card__title">{a.titre}</div>
+              <p class="card__excerpt">{a.extrait}</p>
+              <div class="card__meta">
+                <span>{a.complement}</span><span>·</span><span>{a.duree}</span>
+              </div>
+            </div>
+          </a>
+        ))}
+      </div>
+    ) : (
+      <p style="color:var(--color-text-light);text-align:center;padding:64px">Nos comparatifs arrivent bientôt. Revenez dans quelques jours !</p>
+    )}
+  </div>
+</Layout>

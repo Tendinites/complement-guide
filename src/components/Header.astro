@@ -1,0 +1,243 @@
+---
+const nav = [
+  {
+    label: 'Compléments alimentaires',
+    items: [
+      { href: '/complement/collagene', label: 'Collagène' },
+      { href: '/complement/whey', label: 'Whey' },
+      { href: '/complement/omega-3', label: 'Oméga 3' },
+      { href: '/complement/vitamine-d', label: 'Vitamine D' },
+      { href: '/complement/magnesium', label: 'Magnésium' },
+      { href: '/complement/creatine', label: 'Créatine' },
+      { href: '/complement/probiotiques', label: 'Probiotiques' },
+      { href: '/complement/multivitamines', label: 'Multivitamines' },
+      { href: '/complement/ashwagandha', label: 'Ashwagandha' },
+      { href: '/complement/zinc', label: 'Zinc' },
+      { href: '/complement/fer', label: 'Fer' },
+    ],
+  },
+  { label: 'Conseils', href: '/conseils' },
+  { label: 'Comparatifs', href: '/comparatifs' },
+  { label: 'Tests & Avis', href: '/tests' },
+];
+---
+
+<header class="site-header">
+  <div class="header-inner container">
+    <!-- Logo -->
+    <a href="/" class="header-logo" aria-label="EDP Nutrition - Accueil">
+      <span class="logo-text">EDP <span class="logo-accent">Nutrition</span></span>
+    </a>
+
+    <!-- Nav desktop -->
+    <nav class="header-nav" aria-label="Navigation principale">
+      {nav.map(item => (
+        item.items ? (
+          <div class="nav-dropdown">
+            <button class="nav-btn" aria-haspopup="true" aria-expanded="false">
+              {item.label}
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+                <path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+            <div class="dropdown-menu">
+              {item.items.map(sub => (
+                <a href={sub.href} class="dropdown-item">{sub.label}</a>
+              ))}
+            </div>
+          </div>
+        ) : (
+          <a href={item.href} class="nav-link">{item.label}</a>
+        )
+      ))}
+    </nav>
+
+    <!-- Burger mobile -->
+    <button class="burger" id="burger-btn" aria-label="Ouvrir le menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+
+  <!-- Mobile menu -->
+  <div class="mobile-menu" id="mobile-menu" aria-hidden="true">
+    <div class="mobile-menu__inner">
+      <a href="/complement/omega-3" class="mobile-link">Oméga 3</a>
+      <a href="/complement/magnesium" class="mobile-link">Magnésium</a>
+      <a href="/complement/vitamine-d" class="mobile-link">Vitamine D</a>
+      <a href="/complement/collagene" class="mobile-link">Collagène</a>
+      <a href="/complement/whey" class="mobile-link">Whey</a>
+      <a href="/complement/creatine" class="mobile-link">Créatine</a>
+      <a href="/complement/probiotiques" class="mobile-link">Probiotiques</a>
+      <a href="/complement/ashwagandha" class="mobile-link">Ashwagandha</a>
+      <a href="/complement/zinc" class="mobile-link">Zinc</a>
+      <a href="/complement/fer" class="mobile-link">Fer</a>
+      <hr class="mobile-menu__sep" />
+      <a href="/conseils" class="mobile-link">Conseils</a>
+      <a href="/comparatifs" class="mobile-link">Comparatifs</a>
+      <a href="/tests" class="mobile-link">Tests & Avis</a>
+    </div>
+  </div>
+</header>
+
+<style>
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: #fff;
+  border-bottom: 1px solid var(--color-border);
+  box-shadow: 0 1px 8px rgba(0,0,0,0.05);
+}
+.header-inner {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  height: 64px;
+}
+.header-logo {
+  text-decoration: none;
+  flex-shrink: 0;
+}
+.logo-text {
+  font-family: var(--font-heading);
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--color-text);
+  letter-spacing: -0.5px;
+}
+.logo-accent { color: var(--color-cta); }
+
+.header-nav {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex: 1;
+}
+.nav-link {
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--color-text);
+  padding: 8px 12px;
+  border-radius: 6px;
+  transition: background var(--transition), color var(--transition);
+  text-decoration: none;
+  white-space: nowrap;
+}
+.nav-link:hover { background: var(--color-section-bg); color: var(--color-cta); }
+
+.nav-dropdown { position: relative; }
+.nav-btn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--color-text);
+  background: none;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background var(--transition), color var(--transition);
+  white-space: nowrap;
+}
+.nav-btn:hover { background: var(--color-section-bg); color: var(--color-cta); }
+
+.dropdown-menu {
+  display: none;
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  background: #fff;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-hover);
+  padding: 8px;
+  min-width: 200px;
+  z-index: 200;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2px;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-4px);
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+.nav-dropdown:hover .dropdown-menu,
+.nav-dropdown:focus-within .dropdown-menu {
+  opacity: 1;
+  pointer-events: all;
+  transform: translateY(0);
+}
+.dropdown-item {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-text);
+  padding: 8px 12px;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: background var(--transition), color var(--transition);
+  white-space: nowrap;
+}
+.dropdown-item:hover { background: var(--color-section-bg); color: var(--color-cta); }
+
+.burger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  margin-left: auto;
+}
+.burger span {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background: var(--color-text);
+  border-radius: 2px;
+  transition: all 0.2s ease;
+}
+
+.mobile-menu {
+  display: none;
+  background: #fff;
+  border-top: 1px solid var(--color-border);
+}
+.mobile-menu.open { display: block; }
+.mobile-menu__inner {
+  padding: 16px 24px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.mobile-link {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--color-text);
+  padding: 10px 12px;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: background var(--transition);
+}
+.mobile-link:hover { background: var(--color-section-bg); color: var(--color-cta); }
+.mobile-menu__sep { border: none; border-top: 1px solid var(--color-border); margin: 8px 0; }
+
+@media (max-width: 900px) {
+  .header-nav { display: none; }
+  .burger { display: flex; }
+}
+</style>
+
+<script>
+const burgerBtn = document.getElementById('burger-btn');
+const mobileMenu = document.getElementById('mobile-menu');
+burgerBtn?.addEventListener('click', () => {
+  const open = mobileMenu?.classList.toggle('open');
+  burgerBtn.setAttribute('aria-expanded', String(open));
+  mobileMenu?.setAttribute('aria-hidden', String(!open));
+});
+</script>

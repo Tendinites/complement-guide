@@ -1,0 +1,174 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { articles, complements } from '../../data/articles';
+
+export async function getStaticPaths() {
+  return complements.map(c => ({ params: { slug: c.slug }, props: { complement: c } }));
+}
+
+const { complement } = Astro.props;
+
+const complementArticles = articles.filter(a =>
+  a.complement.toLowerCase() === complement.nom.toLowerCase() ||
+  a.complement === complement.slug
+);
+
+const typeLabels: Record<string, string> = {
+  comparatif: 'Comparatif',
+  conseil: 'Conseil',
+  test: 'Test & Avis',
+  'code-promo': 'Code Promo',
+};
+
+const breadcrumbLD = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Accueil', item: 'https://monsite.fr' },
+    { '@type': 'ListItem', position: 2, name: complement.nom },
+  ],
+};
+---
+
+<Layout
+  title={complement.seoTitle}
+  description={complement.seoDescription}
+  jsonLd={breadcrumbLD}
+>
+  <div class="complement-page">
+    <div class="container">
+
+      <!-- Breadcrumb -->
+      <nav class="breadcrumb">
+        <a href="/">Accueil</a>
+        <span>›</span>
+        <span>{complement.nom}</span>
+      </nav>
+
+      <!-- Hero section -->
+      <div class="complement-hero">
+        <div class="complement-hero__content">
+          <h1 class="complement-hero__title">{complement.nom}</h1>
+          <p class="complement-hero__intro">{complement.introText}</p>
+          <div class="complement-hero__stats">
+            <div class="stat-box">
+              <span class="stat-box__value">{complement.statA.valeur}</span>
+              <span class="stat-box__unit">{complement.statA.unite}</span>
+              <p class="stat-box__label">{complement.statA.label}</p>
+            </div>
+            <div class="stat-box">
+              <span class="stat-box__value">{complement.statB.valeur}</span>
+              <span class="stat-box__unit">{complement.statB.unite}</span>
+              <p class="stat-box__label">{complement.statB.label}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Articles de ce complément -->
+      <section class="complement-articles">
+        <h2 class="section-title">Nos guides sur le {complement.nom}</h2>
+        <p class="section-subtitle">{complementArticles.length} article{complementArticles.length > 1 ? 's' : ''} — comparatifs, conseils et tests rédigés par nos experts.</p>
+
+        {complementArticles.length > 0 ? (
+          <div class="grid-3">
+            {complementArticles.map(article => (
+              <a href={`/articles/${article.slug}`} class="card">
+                <div class="card__body">
+                  <span class={`card__tag ${article.type === 'conseil' ? 'card__tag--blue' : ''}`}>
+                    {typeLabels[article.type] ?? article.type}
+                  </span>
+                  <div class="card__title">{article.titre}</div>
+                  <p class="card__excerpt">{article.extrait}</p>
+                  <div class="card__meta">
+                    <span>{article.duree}</span>
+                    <span>·</span>
+                    <time datetime={article.date}>{new Date(article.date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' })}</time>
+                  </div>
+                </div>
+              </a>
+            ))}
+          </div>
+        ) : (
+          <div class="empty-articles">
+            <p>Nos experts rédigent actuellement des guides sur le {complement.nom}. Revenez bientôt !</p>
+          </div>
+        )}
+      </section>
+
+      <!-- Objectifs liés -->
+      {complement.objectifs.length > 0 && (
+        <section class="related-objectifs">
+          <h2 class="section-title">Objectifs liés</h2>
+          <div class="pills-row">
+            {complement.objectifs.map(obj => (
+              <a href={`/objectif/${obj.toLowerCase().replace(/ /g, '-')}`} class="pill">{obj}</a>
+            ))}
+          </div>
+        </section>
+      )}
+
+    </div>
+  </div>
+</Layout>
+
+<style>
+.complement-page { padding: 32px 0 80px; }
+
+.complement-hero {
+  background: linear-gradient(135deg, #FFF7F5 0%, #F9FAFB 100%);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  padding: 48px;
+  margin-bottom: 56px;
+}
+.complement-hero__title {
+  font-size: 42px;
+  font-weight: 800;
+  margin-bottom: 20px;
+}
+.complement-hero__intro {
+  font-size: 17px;
+  line-height: 1.75;
+  color: var(--color-text-body);
+  max-width: 720px;
+  margin-bottom: 32px;
+}
+.complement-hero__stats {
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+.stat-box {
+  background: var(--color-white);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-box);
+  padding: 20px 24px;
+  min-width: 200px;
+}
+.stat-box__value {
+  font-family: var(--font-heading);
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--color-cta);
+}
+.stat-box__unit { font-size: 16px; font-weight: 600; color: var(--color-text-light); margin-left: 4px; }
+.stat-box__label { font-size: 13px; color: var(--color-text-light); line-height: 1.4; margin-top: 6px; }
+
+@media (max-width: 768px) {
+  .complement-hero { padding: 28px 20px; }
+  .complement-hero__title { font-size: 30px; }
+}
+
+.complement-articles { margin-bottom: 48px; }
+.empty-articles {
+  background: var(--color-section-bg);
+  border-radius: var(--radius-box);
+  padding: 40px;
+  text-align: center;
+  color: var(--color-text-light);
+}
+
+.related-objectifs { margin-top: 48px; }
+.pills-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; }
+</style>

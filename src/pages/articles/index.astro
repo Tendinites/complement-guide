@@ -1,0 +1,103 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { articles, complements } from '../../data/articles';
+
+const typeLabels: Record<string, string> = {
+  comparatif: 'Comparatif',
+  conseil: 'Conseil',
+  test: 'Test & Avis',
+  'code-promo': 'Code Promo',
+};
+
+// Groupe par complément (3 articles max par complément)
+const parComplement = complements
+  .map(c => ({
+    complement: c,
+    articles: articles.filter(a =>
+      a.complement.toLowerCase() === c.nom.toLowerCase() ||
+      a.complement === c.slug
+    ).slice(0, 3),
+  }))
+  .filter(g => g.articles.length > 0);
+---
+
+<Layout
+  title="Tous les articles — EDP Nutrition"
+  description="Retrouvez tous nos guides, comparatifs, conseils et avis sur les compléments alimentaires : oméga 3, magnésium, vitamine D, collagène, whey et bien plus."
+>
+  <div class="articles-page">
+    <div class="container">
+      <div class="page-header">
+        <h1 class="page-header__title">Tous nos articles</h1>
+        <p class="page-header__desc">Comparatifs, conseils et avis rédigés par notre équipe d'experts en nutrition.</p>
+      </div>
+
+      {parComplement.map(({ complement, articles: arts }) => (
+        <section class="articles-section">
+          <div class="articles-section__header">
+            <h2 class="articles-section__title">
+              <a href={`/complement/${complement.slug}`}>{complement.nom}</a>
+            </h2>
+            <a href={`/complement/${complement.slug}`} class="articles-section__more">Voir tous →</a>
+          </div>
+          <div class="grid-3">
+            {arts.map(article => (
+              <a href={`/articles/${article.slug}`} class="card">
+                <div class="card__body">
+                  <span class={`card__tag ${article.type === 'conseil' ? 'card__tag--blue' : ''}`}>
+                    {typeLabels[article.type] ?? article.type}
+                  </span>
+                  <div class="card__title">{article.titre}</div>
+                  <p class="card__excerpt">{article.extrait}</p>
+                  <div class="card__meta">
+                    <span>{article.duree}</span>
+                    <span>·</span>
+                    <time datetime={article.date}>{new Date(article.date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' })}</time>
+                  </div>
+                </div>
+              </a>
+            ))}
+          </div>
+        </section>
+      ))}
+
+      {articles.length === 0 && (
+        <div class="empty-state">
+          <p>Aucun article disponible pour l'instant. Revenez bientôt !</p>
+        </div>
+      )}
+    </div>
+  </div>
+</Layout>
+
+<style>
+.articles-page { padding: 40px 0 80px; }
+.page-header { margin-bottom: 48px; }
+.page-header__title { font-size: 40px; font-weight: 800; margin-bottom: 12px; }
+.page-header__desc { font-size: 18px; color: var(--color-text-light); }
+
+.articles-section { margin-bottom: 56px; }
+.articles-section__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid var(--color-border);
+}
+.articles-section__title {
+  font-size: 22px;
+  font-weight: 700;
+}
+.articles-section__title a { color: var(--color-text); text-decoration: none; }
+.articles-section__title a:hover { color: var(--color-cta); }
+.articles-section__more { font-size: 14px; font-weight: 600; color: var(--color-accent); text-decoration: none; }
+.articles-section__more:hover { color: var(--color-cta); }
+
+.empty-state {
+  text-align: center;
+  padding: 64px 24px;
+  color: var(--color-text-light);
+  font-size: 18px;
+}
+</style>
