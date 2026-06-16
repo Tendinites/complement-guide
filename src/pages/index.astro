@@ -813,10 +813,22 @@ const articlePhoto = (slug: string, complement: string) => {
 }
 </style>
 
-<script define:vars={{ articlesData: articles.map(a => ({ slug: a.slug, titre: a.titre, extrait: a.extrait, complement: a.complement, type: a.type })) }}>
+<script define:vars={{
+  articlesData: articles.map(a => {
+    const comp = complements.find(c => c.slug === a.complement);
+    return {
+      slug: a.slug,
+      titre: a.titre,
+      extrait: a.extrait,
+      complement: a.complement,
+      type: a.type,
+      keywords: comp ? comp.objectifs.join(' ') + ' ' + comp.description : '',
+    };
+  })
+}}>
 // ── Normalisation accents ─────────────────────────────────────
 function normalize(str) {
-  return str.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+  return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
 }
 
 // ── Scroll cartes ─────────────────────────────────────────────
@@ -867,7 +879,8 @@ input?.addEventListener('input', () => {
   const results = articlesData.filter(a =>
     normalize(a.titre).includes(q) ||
     normalize(a.extrait).includes(q) ||
-    normalize(a.complement).includes(q)
+    normalize(a.complement).includes(q) ||
+    normalize(a.keywords || '').includes(q)
   );
   renderDropdown(results);
 });

@@ -624,7 +624,7 @@ function applyObjectifFilter(slug: string) {
 
 // ── Normalisation accents ─────────────────────────────────────
 function normalize(str: string) {
-  return str.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+  return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
 }
 
 // ── Filtrage par recherche ────────────────────────────────────
