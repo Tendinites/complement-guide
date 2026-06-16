@@ -198,43 +198,6 @@ const articlePhoto = (slug: string, type: string) => {
     </div>
   )}
 
-  <!-- ═══════════════════════════════════════════════════════════
-       ARTICLES CONSEILS — scroll horizontal, cartes photos
-       ══════════════════════════════════════════════════════════ -->
-  {conseils.length > 0 && (
-    <div class="edp-section" style="background:#fff; padding: 44px 0;">
-      <div style="max-width:1060px; margin:0 auto; padding:0 24px;">
-        <div class="edp-section-header">
-          <div class="edp-section-title">NOS ARTICLES CONSEILS</div>
-          <div class="edp-scroll-arrows">
-            <button class="edp-scroll-btn" onclick="scrollCards('conseil-scroll', -360)" aria-label="Précédent">‹</button>
-            <button class="edp-scroll-btn" onclick="scrollCards('conseil-scroll', 360)" aria-label="Suivant">›</button>
-          </div>
-        </div>
-        <hr class="edp-section-sep" />
-        <div class="edp-cards-scroll" id="conseil-scroll">
-          {conseils.map(article => (
-            <a href={`/articles/${article.slug}`} class="edp-card">
-              <img
-                class="edp-card-img"
-                src={articlePhoto(article.complement, article.type)}
-                alt={article.titre}
-                loading="lazy"
-                width="320"
-                height="190"
-              />
-              <div class="edp-card-body">
-                <span class="edp-card-tag">{typeLabels[article.type] ?? article.type}</span>
-                <h3>{article.titre}</h3>
-                <p class="meta">{article.complement} · {article.duree}</p>
-                <p class="snippet">{article.extrait}</p>
-              </div>
-            </a>
-          ))}
-        </div>
-      </div>
-    </div>
-  )}
 
   <!-- ═══════════════════════════════════════════════════════════
        RÉPERTOIRE — scroll horizontal, cartes photos rondes
@@ -266,45 +229,6 @@ const articlePhoto = (slug: string, type: string) => {
     </div>
   </div>
 
-  <!-- ═══════════════════════════════════════════════════════════
-       DERNIERS ARTICLES — scroll horizontal
-       ══════════════════════════════════════════════════════════ -->
-  {recentArticles.length > 0 && (
-    <div class="edp-section" style="background:#fff; padding: 44px 0;">
-      <div style="max-width:1060px; margin:0 auto; padding:0 24px;">
-        <div class="edp-section-header">
-          <div class="edp-section-title">DERNIERS ARTICLES</div>
-          <div style="display:flex; align-items:center; gap:12px;">
-            <div class="edp-scroll-arrows">
-              <button class="edp-scroll-btn" onclick="scrollCards('last-scroll', -360)" aria-label="Précédent">‹</button>
-              <button class="edp-scroll-btn" onclick="scrollCards('last-scroll', 360)" aria-label="Suivant">›</button>
-            </div>
-            <a href="/articles" class="btn btn--outline">Tous les articles →</a>
-          </div>
-        </div>
-        <hr class="edp-section-sep" />
-        <div class="edp-cards-scroll" id="last-scroll">
-          {recentArticles.map(article => (
-            <a href={`/articles/${article.slug}`} class="edp-card">
-              <img
-                class="edp-card-img"
-                src={articlePhoto(article.complement, article.type)}
-                alt={article.titre}
-                loading="lazy"
-                width="320"
-                height="190"
-              />
-              <div class="edp-card-body">
-                <span class="edp-card-tag">{typeLabels[article.type] ?? article.type}</span>
-                <h3>{article.titre}</h3>
-                <p class="meta">{article.complement} · {article.duree}</p>
-              </div>
-            </a>
-          ))}
-        </div>
-      </div>
-    </div>
-  )}
 
   <!-- ═══════════════════════════════════════════════════════════
        ÉDITÉ PAR DES SPÉCIALISTES
