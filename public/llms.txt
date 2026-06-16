@@ -1,49 +1,43 @@
-# Guide Tendinites
+# Complément Guide
 
-> Guide francophone de référence sur les tendinites : symptômes, causes, traitements et prévention.
-> Édité par Thomas Mercier. Contenu validé sur la base des recommandations HAS, Ameli, INRS et SFMES.
-> Site indépendant à destination du grand public francophone.
+> Blog éditorial indépendant sur les compléments alimentaires.
+> Comparatifs honnêtes, conseils d'experts et avis produits pour choisir les meilleurs compléments alimentaires.
+> Publié en français, mis à jour régulièrement.
 
-## Pages principales
+## Compléments couverts
 
-- [Accueil](https://guide-tendinites.fr/) : portail par zone du corps
-- [Tous les articles](https://guide-tendinites.fr/articles) : articles groupés par zone
-- [Traitements](https://guide-tendinites.fr/traitements) : 6 traitements prouvés des tendinites
-- [Auteur](https://guide-tendinites.fr/auteur) : Thomas Mercier, éditeur spécialisé santé du sport
+- [Oméga-3](https://complement-guide.vercel.app/complement/omega-3) : EPA, DHA, bienfaits cardiovasculaires et anti-inflammatoires
+- [Magnésium](https://complement-guide.vercel.app/complement/magnesium) : bisglycinate, malate, stress et sommeil
+- [Vitamine D](https://complement-guide.vercel.app/complement/vitamine-d) : D3 + K2, dosage, carence
+- [Collagène](https://complement-guide.vercel.app/complement/collagene) : marin vs bovin, peau et articulations
+- [Whey](https://complement-guide.vercel.app/complement/whey) : protéines, prise de masse, récupération
+- [Créatine](https://complement-guide.vercel.app/complement/creatine) : monohydrate, performance sportive
+- [Probiotiques](https://complement-guide.vercel.app/complement/probiotiques) : souches, flore intestinale
+- [Multivitamines](https://complement-guide.vercel.app/complement/multivitamines) : formules complètes, carences
+- [Ashwagandha](https://complement-guide.vercel.app/complement/ashwagandha) : KSM-66, stress, cortisol
+- [Zinc](https://complement-guide.vercel.app/complement/zinc) : immunité, testostérone
+- [Fer](https://complement-guide.vercel.app/complement/fer) : carence, supplémentation femme
 
-## Guides par zone du corps (symptômes)
+## Articles comparatifs
 
-- [Tendinite de l'épaule](https://guide-tendinites.fr/symptomes/epaule) : coiffe des rotateurs, conflit sous-acromial
-- [Tendinite du coude](https://guide-tendinites.fr/symptomes/coude) : épicondylite latérale, tennis elbow
-- [Tendinite du genou](https://guide-tendinites.fr/symptomes/genou) : tendinite rotulienne, syndrome de l'essuie-glace
-- [Tendinite du poignet](https://guide-tendinites.fr/symptomes/poignet) : De Quervain, syndrome de la souris
-- [Tendinite de la hanche](https://guide-tendinites.fr/symptomes/hanche) : trochantérite, psoas-iliaque
-- [Tendinite de la cheville](https://guide-tendinites.fr/symptomes/cheville) : tibial postérieur, péroniers
-- [Tendinite du pied](https://guide-tendinites.fr/symptomes/pied) : fasciite plantaire, épine calcanéenne
-- [Tendinite d'Achille](https://guide-tendinites.fr/symptomes/achille) : corporéale vs insertionnelle
+- [Meilleur oméga-3](https://complement-guide.vercel.app/articles/omega-3-meilleur-complement)
+- [Magnésium bisglycinate](https://complement-guide.vercel.app/articles/magnesium-bisglycinate-guide)
+- [Vitamine D3 + K2](https://complement-guide.vercel.app/articles/vitamine-d3-k2-comparatif)
+- [Meilleur ashwagandha 2026](https://complement-guide.vercel.app/articles/ashwagandha-stress-comparatif)
+- [Whey protéine comparatif](https://complement-guide.vercel.app/articles/whey-proteine-comparatif)
+- [Probiotiques comparatif](https://complement-guide.vercel.app/articles/probiotiques-comparatif)
+- [Zinc immunité guide](https://complement-guide.vercel.app/articles/zinc-immunite-guide)
+- [Fer carence femme](https://complement-guide.vercel.app/articles/fer-carence-femme)
+- [EPA vs DHA différences](https://complement-guide.vercel.app/articles/omega-3-epa-vs-dha-quelles-differences-et-lequel-pren)
 
-## Guides traitements par pathologie
+## Tous les articles
 
-- [Traitement tendinite épaule](https://guide-tendinites.fr/traitements/epaule)
-- [Traitement épicondylite (coude)](https://guide-tendinites.fr/traitements/coude)
-- [Traitement tendinite genou](https://guide-tendinites.fr/traitements/genou)
-- [Traitement tendinite poignet](https://guide-tendinites.fr/traitements/poignet)
-- [Traitement trochantérite (hanche)](https://guide-tendinites.fr/traitements/hanche)
-- [Traitement tendinite cheville](https://guide-tendinites.fr/traitements/cheville)
-- [Traitement fasciite plantaire (pied)](https://guide-tendinites.fr/traitements/pied)
-- [Traitement tendinite d'Achille](https://guide-tendinites.fr/traitements/achille)
-
-## Articles récents (mis à jour automatiquement)
-
-Les articles sont publiés plusieurs fois par semaine sur des angles spécifiques :
-durée de guérison, symptômes précoces, différences entre pathologies, exercices excentriques,
-facteurs de risque, retour au sport. Voir la liste complète sur /articles.
+- [Liste complète](https://complement-guide.vercel.app/articles)
 
 ## Informations éditoriales
 
-- Fréquence de publication : 4 articles par semaine
-- Mise à jour éditoriale : hebdomadaire (articles anciens enrichis)
-- Sources utilisées : HAS, Ameli, INRS, SFMES, SOFCOT, NCBI, Inserm, Vidal
+- Fréquence de publication : 4 articles par semaine (robot IA + relecture)
+- Sources : études cliniques PubMed, ANSES, EFSA
 - Langue : français (France)
-- Public cible : adultes francophones souffrant de douleurs tendineuses
-- Contact : contact@guide-tendinites.fr
+- Public cible : adultes francophones cherchant à optimiser leur santé
+- Thématiques : nutrition sportive, bien-être, récupération, immunité, stress, sommeil

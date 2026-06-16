@@ -1,12 +1,10 @@
-# robots.txt — guide-tendinites.fr
-# Tous les crawlers sont les bienvenus, sauf sur les routes API et techniques.
-
+# robots.txt — complement-guide.vercel.app
 User-agent: *
 Allow: /
 Disallow: /api/
 Disallow: /404
 
-# IA crawlers — autorisés (le contenu est public et sourcé)
+# IA crawlers — autorisés pour citation dans les réponses génératrices
 User-agent: GPTBot
 Allow: /
 
@@ -19,5 +17,4 @@ Allow: /
 User-agent: Google-Extended
 Allow: /
 
-# Sitemap (auto-généré par @astrojs/sitemap au build)
-Sitemap: https://guide-tendinites.fr/sitemap-index.xml
+Sitemap: https://complement-guide.vercel.app/sitemap-index.xml

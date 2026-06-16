@@ -15,8 +15,8 @@ interface Props {
 }
 
 const {
-  title = "EDP Nutrition — Expert en compléments alimentaires",
-  description = "Guide indépendant sur les compléments alimentaires : comparatifs, conseils, avis et tests. Rédigé par des experts en nutrition pour vous aider à choisir.",
+  title = "Complément Guide — Expert indépendant en compléments alimentaires",
+  description = "Guide indépendant sur les compléments alimentaires : comparatifs honnêtes, conseils d'experts et avis produits. Tout ce qu'il faut savoir pour bien choisir.",
   ogImage = "/images/og-default.jpg",
   ogType = 'website',
   noindex = false,
@@ -24,7 +24,7 @@ const {
   jsonLd,
 } = Astro.props;
 
-const SITE_URL = 'https://monsite.fr'; // à remplacer par le vrai domaine
+const SITE_URL = 'https://complement-guide.vercel.app';
 const canonicalURL = canonicalOverride
   ? new URL(canonicalOverride, SITE_URL).href
   : new URL(Astro.url.pathname, SITE_URL).href;
@@ -33,7 +33,7 @@ const ogImageURL = new URL(ogImage, SITE_URL).href;
 const organizationLD = {
   '@context': 'https://schema.org',
   '@type': 'Organization',
-  name: 'EDP Nutrition',
+  name: 'Complément Guide',
   url: SITE_URL,
   logo: `${SITE_URL}/favicon.svg`,
   description: "Guide indépendant sur les compléments alimentaires.",
@@ -42,7 +42,7 @@ const organizationLD = {
 const websiteLD = {
   '@context': 'https://schema.org',
   '@type': 'WebSite',
-  name: 'EDP Nutrition',
+  name: 'Complément Guide',
   url: SITE_URL,
   inLanguage: 'fr-FR',
   potentialAction: {
@@ -78,7 +78,7 @@ if (jsonLd) {
     <meta property="og:url" content={canonicalURL} />
     <meta property="og:image" content={ogImageURL} />
     <meta property="og:locale" content="fr_FR" />
-    <meta property="og:site_name" content="EDP Nutrition" />
+    <meta property="og:site_name" content="Complément Guide" />
 
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
