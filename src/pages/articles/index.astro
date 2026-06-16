@@ -622,9 +622,14 @@ function applyObjectifFilter(slug: string) {
   });
 }
 
+// ── Normalisation accents ─────────────────────────────────────
+function normalize(str: string) {
+  return str.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+}
+
 // ── Filtrage par recherche ────────────────────────────────────
 function applySearchFilter(query: string) {
-  const q = query.toLowerCase().trim();
+  const q = normalize(query.trim());
   if (!q) return;
 
   // Afficher bandeau
@@ -638,7 +643,7 @@ function applySearchFilter(query: string) {
   // Masquer les cartes qui ne correspondent pas
   const allCards = document.querySelectorAll<HTMLElement>('.al-card');
   allCards.forEach(card => {
-    const searchText = card.dataset.search ?? '';
+    const searchText = normalize(card.dataset.search ?? '');
     if (!searchText.includes(q)) card.classList.add('al-card--hidden');
   });
 
