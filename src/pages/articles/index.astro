@@ -46,6 +46,7 @@ const groupsComplements = complements
   .map(c => ({
     slug: c.slug, nom: c.nom, description: c.description,
     href: `/complement/${c.slug}`,
+    objectifs: c.objectifs,
     arts: articles.filter(a => a.complement === c.slug || a.complement.toLowerCase() === c.nom.toLowerCase()),
   }))
   .filter(g => g.arts.length > 0);
@@ -55,6 +56,7 @@ const groupsRecup = appareilsRecup
   .map(r => ({
     slug: r.slug, nom: r.nom, description: r.description,
     href: `/articles/${r.slug}`,
+    objectifs: r.objectifs,
     arts: articles.filter(a => a.complement === r.slug),
   }))
   .filter(g => g.arts.length > 0);
@@ -90,6 +92,15 @@ const totalArticles = articles.length;
     </div>
   </div>
 
+  <!-- ── BANDEAU FILTRE OBJECTIF ──────────────────────────────────── -->
+  <div class="al-objectif-banner" id="al-objectif-banner" style="display:none">
+    <div class="al-objectif-banner__inner">
+      <span class="al-objectif-banner__label">Filtré par objectif :</span>
+      <strong class="al-objectif-banner__name" id="al-objectif-name"></strong>
+      <a href="/articles" class="al-objectif-banner__clear">× Voir tout</a>
+    </div>
+  </div>
+
   <!-- ── SECTION COMPLÉMENTS ────────────────────────────────────── -->
   <div class="al-wrap" id="section-complements" data-section="complements">
     <div class="al-section-header">
@@ -103,7 +114,7 @@ const totalArticles = articles.length;
     </div>
 
     {groupsComplements.map(group => (
-      <div class="al-group" data-group={group.slug}>
+      <div class="al-group" data-group={group.slug} data-objectifs={group.objectifs.join('|')}>
         <div class="al-group__header">
           <div class="al-group__title-row">
             <h3 class="al-group__name">{group.nom}</h3>
@@ -162,7 +173,7 @@ const totalArticles = articles.length;
     </div>
 
     {groupsRecup.map(group => (
-      <div class="al-group" data-group={group.slug}>
+      <div class="al-group" data-group={group.slug} data-objectifs={group.objectifs.join('|')}>
         <div class="al-group__header">
           <div class="al-group__title-row">
             <h3 class="al-group__name">{group.nom}</h3>
@@ -480,6 +491,35 @@ const totalArticles = articles.length;
 }
 .al-card:hover .al-card__read { color: #2563EB; }
 
+/* ── BANDEAU OBJECTIF ─────────────────────────────────────────── */
+.al-objectif-banner {
+  background: #ECFDF5;
+  border-bottom: 1px solid #A7F3D0;
+}
+.al-objectif-banner__inner {
+  max-width: 1060px;
+  margin: 0 auto;
+  padding: 12px 24px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 14px;
+}
+.al-objectif-banner__label { color: #6B7280; }
+.al-objectif-banner__name { color: #065F46; font-weight: 700; }
+.al-objectif-banner__clear {
+  margin-left: auto;
+  color: #DC2626;
+  font-weight: 600;
+  text-decoration: none;
+  font-size: 13px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  transition: background .15s;
+}
+.al-objectif-banner__clear:hover { background: #FEE2E2; }
+
 /* ── HIDDEN par filtre JS ─────────────────────────────────────── */
 .al-group--hidden { display: none; }
 .al-wrap--hidden  { display: none; }
@@ -495,42 +535,90 @@ const totalArticles = articles.length;
 </style>
 
 <script>
-// Filtres interactifs
-const chips = document.querySelectorAll<HTMLButtonElement>('.al-chip');
-const groups = document.querySelectorAll<HTMLElement>('.al-group');
-const sections = document.querySelectorAll<HTMLElement>('.al-wrap');
-const cards = document.querySelectorAll<HTMLElement>('.al-card');
+// ── Mapping slug objectif → nom affiché ───────────────────────
+const OBJECTIF_NOMS: Record<string, string> = {
+  'perte-de-poids': 'Perte de poids',
+  'bien-vieillir': 'Bien vieillir',
+  'digestion': 'Digestion',
+  'stress': 'Stress',
+  'nutrition-sportive': 'Nutrition sportive',
+  'recuperation-sportive': 'Récupération sportive',
+  'sante-feminine': 'Santé féminine',
+};
 
+const chips   = document.querySelectorAll<HTMLButtonElement>('.al-chip');
+const groups  = document.querySelectorAll<HTMLElement>('.al-group');
+const sections = document.querySelectorAll<HTMLElement>('.al-wrap');
+const banner  = document.getElementById('al-objectif-banner');
+const bannerName = document.getElementById('al-objectif-name');
+
+function showAll() {
+  sections.forEach(s => s.classList.remove('al-wrap--hidden'));
+  groups.forEach(g => g.classList.remove('al-group--hidden'));
+}
+
+function applyChipFilter(filter: string) {
+  showAll();
+  if (filter === 'all') return;
+  if (filter === 'complements') {
+    sections.forEach(s => { if (s.dataset.section === 'recup') s.classList.add('al-wrap--hidden'); });
+    return;
+  }
+  if (filter === 'recup') {
+    sections.forEach(s => { if (s.dataset.section === 'complements') s.classList.add('al-wrap--hidden'); });
+    return;
+  }
+  // filtre par type d'article
+  groups.forEach(g => {
+    if (!g.querySelectorAll(`.al-card[data-type="${filter}"]`).length) g.classList.add('al-group--hidden');
+  });
+  // masquer sections vides
+  sections.forEach(s => {
+    const visible = [...s.querySelectorAll<HTMLElement>('.al-group')].some(g => !g.classList.contains('al-group--hidden'));
+    if (!visible) s.classList.add('al-wrap--hidden');
+  });
+}
+
+// ── Filtrage par objectif (param URL) ─────────────────────────
+function applyObjectifFilter(slug: string) {
+  const nom = OBJECTIF_NOMS[slug];
+  if (!nom) return;
+
+  // Afficher bandeau
+  if (banner && bannerName) {
+    bannerName.textContent = nom;
+    banner.style.display = 'block';
+  }
+
+  // Masquer groupes dont les objectifs ne contiennent pas ce nom
+  groups.forEach(g => {
+    const objList = (g.dataset.objectifs ?? '').split('|');
+    if (!objList.includes(nom)) g.classList.add('al-group--hidden');
+  });
+
+  // Masquer sections entièrement vides
+  sections.forEach(s => {
+    const visible = [...s.querySelectorAll<HTMLElement>('.al-group')].some(g => !g.classList.contains('al-group--hidden'));
+    if (!visible) s.classList.add('al-wrap--hidden');
+  });
+}
+
+// ── Init au chargement ────────────────────────────────────────
+const params = new URLSearchParams(window.location.search);
+const objectifParam = params.get('objectif');
+if (objectifParam) {
+  applyObjectifFilter(objectifParam);
+}
+
+// ── Chips interactifs ─────────────────────────────────────────
 chips.forEach(chip => {
   chip.addEventListener('click', () => {
     chips.forEach(c => c.classList.remove('al-chip--active'));
     chip.classList.add('al-chip--active');
-    const filter = chip.dataset.filter ?? 'all';
-
-    // Reset tout
-    sections.forEach(s => s.classList.remove('al-wrap--hidden'));
-    groups.forEach(g => g.classList.remove('al-group--hidden'));
-
-    if (filter === 'all') return;
-
-    if (filter === 'complements') {
-      sections.forEach(s => {
-        if (s.dataset.section === 'recup') s.classList.add('al-wrap--hidden');
-      });
-      return;
-    }
-    if (filter === 'recup') {
-      sections.forEach(s => {
-        if (!s.dataset.section || s.dataset.section === 'complements') s.classList.add('al-wrap--hidden');
-      });
-      return;
-    }
-
-    // Filtrage par type (comparatif / conseil)
-    groups.forEach(group => {
-      const matchingCards = group.querySelectorAll<HTMLElement>(`.al-card[data-type="${filter}"]`);
-      if (matchingCards.length === 0) group.classList.add('al-group--hidden');
-    });
+    // Enlever filtre objectif si on clique un chip
+    if (banner) banner.style.display = 'none';
+    history.replaceState(null, '', '/articles');
+    applyChipFilter(chip.dataset.filter ?? 'all');
   });
 });
 </script>
