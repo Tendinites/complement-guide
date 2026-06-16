@@ -92,6 +92,12 @@ const totalArticles = articles.length;
     </div>
   </div>
 
+  <!-- ── MESSAGE AUCUN RÉSULTAT ────────────────────────────────────── -->
+  <div class="al-no-results" id="al-no-results">
+    <strong>Aucun résultat trouvé</strong>
+    Essayez un autre mot-clé ou <a href="/articles">voir tous les articles</a>.
+  </div>
+
   <!-- ── BANDEAU FILTRE OBJECTIF ──────────────────────────────────── -->
   <div class="al-objectif-banner" id="al-objectif-banner" style="display:none">
     <div class="al-objectif-banner__inner">
@@ -130,6 +136,7 @@ const totalArticles = articles.length;
               class={`al-card ${i === 0 ? 'al-card--lead' : ''}`}
               data-type={article.type}
               data-section="complements"
+              data-search={`${article.titre} ${article.extrait} ${group.nom}`.toLowerCase()}
             >
               {i === 0 && (
                 <div class="al-card__img-wrap">
@@ -188,6 +195,7 @@ const totalArticles = articles.length;
               class={`al-card ${i === 0 ? 'al-card--lead' : ''}`}
               data-type={article.type}
               data-section="recup"
+              data-search={`${article.titre} ${article.extrait} ${group.nom}`.toLowerCase()}
             >
               {i === 0 && (
                 <div class="al-card__img-wrap">
@@ -523,6 +531,15 @@ const totalArticles = articles.length;
 /* ── HIDDEN par filtre JS ─────────────────────────────────────── */
 .al-group--hidden { display: none; }
 .al-wrap--hidden  { display: none; }
+.al-card--hidden  { display: none; }
+.al-no-results {
+  display: none;
+  text-align: center;
+  padding: 64px 24px;
+  font-family: 'Montserrat', sans-serif;
+  color: #6B7280;
+}
+.al-no-results strong { display: block; font-size: 20px; color: #1E293B; margin-bottom: 8px; }
 
 /* ── RESPONSIVE ───────────────────────────────────────────────── */
 @media (max-width: 600px) {
@@ -555,6 +572,8 @@ const bannerName = document.getElementById('al-objectif-name');
 function showAll() {
   sections.forEach(s => s.classList.remove('al-wrap--hidden'));
   groups.forEach(g => g.classList.remove('al-group--hidden'));
+  document.querySelectorAll<HTMLElement>('.al-card').forEach(c => c.classList.remove('al-card--hidden'));
+  document.getElementById('al-no-results')?.style.setProperty('display', 'none');
 }
 
 function applyChipFilter(filter: string) {
@@ -603,11 +622,53 @@ function applyObjectifFilter(slug: string) {
   });
 }
 
+// ── Filtrage par recherche ────────────────────────────────────
+function applySearchFilter(query: string) {
+  const q = query.toLowerCase().trim();
+  if (!q) return;
+
+  // Afficher bandeau
+  if (banner && bannerName) {
+    bannerName.textContent = `"${query}"`;
+    banner.style.display = 'block';
+    const label = banner.querySelector<HTMLElement>('.al-objectif-banner__label');
+    if (label) label.textContent = 'Résultats pour :';
+  }
+
+  // Masquer les cartes qui ne correspondent pas
+  const allCards = document.querySelectorAll<HTMLElement>('.al-card');
+  allCards.forEach(card => {
+    const searchText = card.dataset.search ?? '';
+    if (!searchText.includes(q)) card.classList.add('al-card--hidden');
+  });
+
+  // Masquer groupes sans aucune carte visible
+  groups.forEach(g => {
+    const hasVisible = [...g.querySelectorAll<HTMLElement>('.al-card')].some(c => !c.classList.contains('al-card--hidden'));
+    if (!hasVisible) g.classList.add('al-group--hidden');
+  });
+
+  // Masquer sections vides
+  sections.forEach(s => {
+    const visible = [...s.querySelectorAll<HTMLElement>('.al-group')].some(g => !g.classList.contains('al-group--hidden'));
+    if (!visible) s.classList.add('al-wrap--hidden');
+  });
+
+  // Message si aucun résultat
+  const anyVisible = [...groups].some(g => !g.classList.contains('al-group--hidden'));
+  if (!anyVisible) {
+    document.getElementById('al-no-results')?.style.setProperty('display', 'block');
+  }
+}
+
 // ── Init au chargement ────────────────────────────────────────
 const params = new URLSearchParams(window.location.search);
 const objectifParam = params.get('objectif');
+const queryParam = params.get('q');
 if (objectifParam) {
   applyObjectifFilter(objectifParam);
+} else if (queryParam) {
+  applySearchFilter(queryParam);
 }
 
 // ── Chips interactifs ─────────────────────────────────────────
@@ -615,8 +676,9 @@ chips.forEach(chip => {
   chip.addEventListener('click', () => {
     chips.forEach(c => c.classList.remove('al-chip--active'));
     chip.classList.add('al-chip--active');
-    // Enlever filtre objectif si on clique un chip
+    // Enlever filtre objectif/recherche si on clique un chip
     if (banner) banner.style.display = 'none';
+    showAll();
     history.replaceState(null, '', '/articles');
     applyChipFilter(chip.dataset.filter ?? 'all');
   });
