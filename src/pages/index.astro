@@ -236,10 +236,6 @@ const articlePhoto = (slug: string, complement: string) => {
   <div class="edp-section">
     <div class="edp-section-header">
       <div class="edp-section-title">NOTRE RÉPERTOIRE DE COMPLÉMENTS</div>
-      <div class="edp-scroll-arrows">
-        <button class="edp-scroll-btn" onclick="scrollCards('rep-scroll', -360)" aria-label="Précédent">‹</button>
-        <button class="edp-scroll-btn" onclick="scrollCards('rep-scroll', 360)" aria-label="Suivant">›</button>
-      </div>
     </div>
     <hr class="edp-section-sep" />
     <div class="edp-rep-scroll" id="rep-scroll">
@@ -591,25 +587,18 @@ const articlePhoto = (slug: string, complement: string) => {
 
 /* ── RÉPERTOIRE ──────────────────────────────────────────────── */
 .edp-rep-scroll {
-  display: flex;
-  gap: 20px;
-  overflow-x: auto;
-  padding-bottom: 4px;
-  scroll-behavior: smooth;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
+  display: grid;
+  grid-template-columns: repeat(11, 1fr);
+  gap: 16px;
 }
-.edp-rep-scroll::-webkit-scrollbar { display: none; }
 .edp-rep-item {
-  flex: 0 0 160px;
   text-align: center;
   display: block;
   text-decoration: none;
 }
 .edp-rep-visual {
-  width: 140px;
-  height: 140px;
+  width: 100%;
+  aspect-ratio: 1;
   border-radius: 20px;
   background: #F6F7F8;
   border: 2px solid #E5E7EB;
@@ -734,8 +723,7 @@ const articlePhoto = (slug: string, complement: string) => {
   .edp-objectives-scroll { grid-template-columns: repeat(4, 1fr); gap: 12px; }
   .edp-obj-label { font-size: 12px; }
   .edp-compa-grid { grid-template-columns: 1fr; }
-  .edp-rep-visual { width: 100px; height: 100px; }
-  .edp-rep-item { flex: 0 0 120px; }
+  .edp-rep-scroll { grid-template-columns: repeat(4, 1fr); gap: 10px; }
   .edp-section { padding: 32px 16px; }
 }
 </style>
