@@ -379,6 +379,10 @@ h1, h2, h3, h4, h5, h6 {
   border-radius: 999px;
   margin-top: 2px;
 }
+.cg-tag--partner {
+  background: #F0FDF4;
+  color: #16A34A;
+}
 .cg-stars { color: #FBBF24; font-size: 14px; letter-spacing: 1px; }
 .cg-star-empty { color: #D1D5DB; }
 
