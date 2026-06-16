@@ -149,7 +149,7 @@ const articlePhoto = (slug: string, complement: string) => {
     <div class="edp-top10-category-label">💊 Compléments alimentaires</div>
     <div class="edp-top10-grid">
       {[
-        { slug: 'complement/whey',           nom: 'Top 10 Whey Protéine',       desc: 'Les meilleures poudres de protéines testées', emoji: '💪', color: '#EFF6FF', border: '#BFDBFE' },
+        { slug: 'complement/whey',           nom: 'Top 10 Whey Protéine',       desc: 'Les meilleures poudres de protéines testées', emoji: '💪', color: '#ECFDF5', border: '#A7F3D0' },
         { slug: 'complement/collagene',      nom: 'Top 10 Collagène',           desc: 'Collagène marin vs bovin : notre classement', emoji: '✨', color: '#FDF4FF', border: '#E9D5FF' },
         { slug: 'complement/omega-3',        nom: 'Top 10 Oméga 3',             desc: 'EPA/DHA : les capsules les plus biodisponibles', emoji: '🐟', color: '#ECFDF5', border: '#A7F3D0' },
         { slug: 'complement/magnesium',      nom: 'Top 10 Magnésium',           desc: 'Bisglycinate, malate : quelle forme choisir ?', emoji: '⚡', color: '#FFFBEB', border: '#FCD34D' },
@@ -170,7 +170,7 @@ const articlePhoto = (slug: string, complement: string) => {
     <div class="edp-top10-category-label" style="margin-top:2rem">🏃 Appareils de récupération</div>
     <div class="edp-top10-grid">
       {[
-        { slug: 'articles/pistolet-massage',    nom: 'Top 10 Pistolets massage',    desc: 'Les meilleures percussions musculaires testées', emoji: '🔫', color: '#EFF6FF', border: '#BFDBFE' },
+        { slug: 'articles/pistolet-massage',    nom: 'Top 10 Pistolets massage',    desc: 'Les meilleures percussions musculaires testées', emoji: '🔫', color: '#ECFDF5', border: '#A7F3D0' },
         { slug: 'articles/bottes-compression',  nom: 'Top 10 Bottes compression',   desc: 'Récupération jambes : les meilleurs modèles', emoji: '🥾', color: '#FDF4FF', border: '#E9D5FF' },
         { slug: 'articles/cryotherapie',        nom: 'Top 10 Cryothérapie',         desc: 'Bain froid, cryo locale : notre classement', emoji: '🧊', color: '#ECFDF5', border: '#A7F3D0' },
         { slug: 'articles/foam-roller',         nom: 'Top 10 Foam Rollers',         desc: 'Lisses, vibrants, picots : quelle forme choisir ?', emoji: '🪵', color: '#FFFBEB', border: '#FCD34D' },
@@ -277,7 +277,7 @@ const articlePhoto = (slug: string, complement: string) => {
 <style>
 /* ── HERO ─────────────────────────────────────────────────────── */
 .edp-hero {
-  background: linear-gradient(135deg, #0F172A 0%, #1E3A5F 50%, #1E40AF 100%);
+  background: linear-gradient(135deg, #064E3B 0%, #065F46 50%, #059669 100%);
   padding: 80px 24px 90px;
   text-align: center;
   position: relative;
@@ -289,7 +289,7 @@ const articlePhoto = (slug: string, complement: string) => {
   position: absolute;
   top: -40%; left: -30%;
   width: 160%; height: 180%;
-  background: radial-gradient(ellipse at 30% 50%, rgba(59,130,246,.12) 0%, transparent 55%);
+  background: radial-gradient(ellipse at 30% 50%, rgba(16,185,129,.12) 0%, transparent 55%);
   pointer-events: none;
 }
 .edp-hero-inner {
@@ -306,7 +306,7 @@ const articlePhoto = (slug: string, complement: string) => {
   color: #fff;
   font-family: 'Montserrat', sans-serif;
 }
-.edp-hero h1 span { color: #60A5FA; }
+.edp-hero h1 span { color: #6EE7B7; }
 .edp-hero-sub {
   font-size: 17px;
   color: rgba(255,255,255,.65);
@@ -349,13 +349,13 @@ const articlePhoto = (slug: string, complement: string) => {
   font-family: 'Montserrat', sans-serif;
   border: none;
   cursor: pointer;
-  background: #3B82F6;
+  background: #10B981;
   color: #fff;
   transition: background .2s;
   white-space: nowrap;
   flex-shrink: 0;
 }
-.edp-search-bar button:hover { background: #2563EB; }
+.edp-search-bar button:hover { background: #059669; }
 .edp-search-dropdown {
   display: none;
   position: absolute;
@@ -430,7 +430,7 @@ const articlePhoto = (slug: string, complement: string) => {
   transition: border-color .2s, box-shadow .2s;
 }
 .edp-obj-item:hover .edp-obj-img {
-  border-color: #3B82F6;
+  border-color: #10B981;
   box-shadow: 0 4px 16px rgba(59,130,246,.15);
 }
 .edp-obj-img img {
@@ -475,13 +475,13 @@ const articlePhoto = (slug: string, complement: string) => {
   text-decoration: none;
 }
 .edp-compa-card:hover {
-  border-color: #3B82F6;
+  border-color: #10B981;
   box-shadow: 0 3px 12px rgba(59,130,246,.08);
 }
 .edp-compa-dot {
   width: 8px; height: 8px;
   border-radius: 50%;
-  background: #3B82F6;
+  background: #10B981;
   flex-shrink: 0;
 }
 .edp-compa-info { flex: 1; min-width: 0; }
@@ -510,7 +510,7 @@ const articlePhoto = (slug: string, complement: string) => {
   flex-shrink: 0;
   line-height: 1;
 }
-.edp-compa-card:hover .edp-compa-arrow { color: #3B82F6; }
+.edp-compa-card:hover .edp-compa-arrow { color: #10B981; }
 
 /* ── DERNIERS ARTICLES ───────────────────────────────────────── */
 .edp-latest-section { background: #fff; }
@@ -553,7 +553,7 @@ const articlePhoto = (slug: string, complement: string) => {
 .edp-latest-tag {
   position: absolute;
   top: 12px; left: 12px;
-  background: #FF7043;
+  background: #10B981;
   color: #fff;
   font-size: 11px;
   font-weight: 700;
@@ -624,7 +624,7 @@ const articlePhoto = (slug: string, complement: string) => {
   overflow: hidden;
   transition: border-color .2s;
 }
-.edp-rep-item:hover .edp-rep-visual { border-color: #3B82F6; }
+.edp-rep-item:hover .edp-rep-visual { border-color: #10B981; }
 .edp-rep-visual img {
   width: 100%; height: 100%;
   object-fit: cover;
@@ -645,8 +645,8 @@ const articlePhoto = (slug: string, complement: string) => {
   gap: 14px;
 }
 .edp-top10-card {
-  background: var(--card-bg, #EFF6FF);
-  border: 1px solid var(--card-border, #BFDBFE);
+  background: var(--card-bg, #ECFDF5);
+  border: 1px solid var(--card-border, #A7F3D0);
   border-radius: 12px;
   padding: 18px 18px 16px;
   display: flex;
@@ -658,7 +658,7 @@ const articlePhoto = (slug: string, complement: string) => {
 .edp-top10-card:hover {
   box-shadow: 0 4px 16px rgba(0,0,0,.08);
   transform: translateY(-2px);
-  border-color: #3B82F6;
+  border-color: #10B981;
 }
 .edp-top10-emoji {
   font-size: 28px;
@@ -686,7 +686,7 @@ const articlePhoto = (slug: string, complement: string) => {
   flex-shrink: 0;
   transition: color .15s;
 }
-.edp-top10-card:hover .edp-top10-arrow { color: #3B82F6; }
+.edp-top10-card:hover .edp-top10-arrow { color: #10B981; }
 .edp-top10-category-label {
   font-size: 0.85rem;
   font-weight: 700;
@@ -704,7 +704,7 @@ const articlePhoto = (slug: string, complement: string) => {
 
 /* ── SPECIALISTS ─────────────────────────────────────────────── */
 .edp-specialists {
-  background: #1E293B;
+  background: #1A3A2A;
   padding: 48px 24px;
   text-align: center;
   margin-top: 0;
@@ -716,7 +716,7 @@ const articlePhoto = (slug: string, complement: string) => {
 .edp-specialists-badge {
   display: inline-block;
   background: rgba(59,130,246,.15);
-  color: #60A5FA;
+  color: #6EE7B7;
   font-family: 'Montserrat', sans-serif;
   font-size: 13px;
   font-weight: 700;
