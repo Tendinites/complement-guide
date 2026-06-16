@@ -1,14 +1,17 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-import { articles, complements } from '../../data/articles';
+import { articles, complements, appareilsRecup } from '../../data/articles';
 
 export async function getStaticPaths() {
   return articles.map(a => ({ params: { slug: a.slug }, props: { article: a } }));
 }
 
 const { article } = Astro.props;
-const complement = complements.find(c => c.slug === article.complement ||
-  c.nom.toLowerCase() === article.complement.toLowerCase());
+const complement = complements.find(c =>
+  c.slug === article.complement || c.nom.toLowerCase() === article.complement.toLowerCase()
+);
+const recuperation = appareilsRecup.find(r => r.slug === article.complement);
+const isRecupCategory = !!recuperation;
 
 const typeLabels: Record<string, string> = {
   comparatif: 'Comparatif',
@@ -18,7 +21,7 @@ const typeLabels: Record<string, string> = {
 };
 
 const dateFormatted = new Date(article.date).toLocaleDateString('fr-FR', {
-  day: 'numeric', month: 'long', year: 'numeric'
+  day: 'numeric', month: 'long', year: 'numeric',
 });
 const updatedFormatted = article.updated
   ? new Date(article.updated).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })
@@ -26,7 +29,30 @@ const updatedFormatted = article.updated
 
 const relatedArticles = articles
   .filter(a => a.slug !== article.slug && a.complement === article.complement)
-  .slice(0, 3);
+  .slice(0, 4);
+
+// Photo hero par complément
+const heroPhotos: Record<string, string> = {
+  'omega-3':        'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?w=1200&h=500&fit=crop',
+  'magnesium':      'https://images.unsplash.com/photo-1628771065518-0d82f1938462?w=1200&h=500&fit=crop',
+  'vitamine-d':     'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=1200&h=500&fit=crop',
+  'collagene':      'https://images.unsplash.com/photo-1515377905703-c4788e51af15?w=1200&h=500&fit=crop',
+  'whey':           'https://images.unsplash.com/photo-1593095948071-474c5cc2989d?w=1200&h=500&fit=crop',
+  'creatine':       'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=1200&h=500&fit=crop',
+  'probiotiques':   'https://images.unsplash.com/photo-1574316071802-0d684efa7bf5?w=1200&h=500&fit=crop',
+  'multivitamines': 'https://images.unsplash.com/photo-1512069772995-ec65ed45afd6?w=1200&h=500&fit=crop',
+  'ashwagandha':    'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=1200&h=500&fit=crop',
+  'zinc':           'https://images.unsplash.com/photo-1587854692152-cbe660dbde88?w=1200&h=500&fit=crop',
+  'fer':                'https://images.unsplash.com/photo-1558030006-450675393462?w=1200&h=500&fit=crop',
+  // Appareils de récupération
+  'pistolet-massage':   'https://plus.unsplash.com/premium_photo-1682092304863-28846294f68c?w=480&h=260&fit=crop&auto=format',
+  'bottes-compression': 'https://images.pexels.com/photos/20860588/pexels-photo-20860588.jpeg?auto=compress&cs=tinysrgb&w=480&h=260&fit=crop',
+  'cryotherapie':       'https://images.pexels.com/photos/7041577/pexels-photo-7041577.jpeg?auto=compress&cs=tinysrgb&w=480&h=260&fit=crop',
+  'foam-roller':        'https://plus.unsplash.com/premium_photo-1661923103649-0223557b8589?w=480&h=260&fit=crop&auto=format',
+  'electrostimulation': 'https://images.pexels.com/photos/7108341/pexels-photo-7108341.jpeg?auto=compress&cs=tinysrgb&w=480&h=260&fit=crop',
+  'bain-froid':         'https://images.pexels.com/photos/14815623/pexels-photo-14815623.jpeg?auto=compress&cs=tinysrgb&w=480&h=260&fit=crop',
+};
+const heroImg = heroPhotos[article.complement] ?? heroPhotos['multivitamines'];
 
 const articleLD = {
   '@context': 'https://schema.org',
@@ -35,16 +61,8 @@ const articleLD = {
   description: article.extrait,
   datePublished: article.date,
   dateModified: article.updated ?? new Date().toISOString().split('T')[0],
-  author: {
-    '@type': 'Person',
-    name: 'La Rédaction EDP Nutrition',
-    url: '/qui-sommes-nous',
-  },
-  publisher: {
-    '@type': 'Organization',
-    name: 'EDP Nutrition',
-    url: 'https://monsite.fr',
-  },
+  author: { '@type': 'Person', name: 'La Rédaction', url: '/qui-sommes-nous' },
+  publisher: { '@type': 'Organization', name: 'Complément Guide', url: 'https://monsite.fr' },
 };
 
 const breadcrumbLD = {
@@ -52,121 +70,264 @@ const breadcrumbLD = {
   '@type': 'BreadcrumbList',
   itemListElement: [
     { '@type': 'ListItem', position: 1, name: 'Accueil', item: 'https://monsite.fr' },
-    { '@type': 'ListItem', position: 2, name: article.complement, item: `https://monsite.fr/complement/${article.complement}` },
+    { '@type': 'ListItem', position: 2, name: complement?.nom ?? article.complement, item: `https://monsite.fr/complement/${article.complement}` },
     { '@type': 'ListItem', position: 3, name: article.titre },
   ],
 };
 ---
 
 <Layout
-  title={`${article.titre} — EDP Nutrition`}
+  title={`${article.titre} — Complément Guide`}
   description={article.extrait}
   ogType="article"
   canonicalOverride={article.canonical}
   noindex={!!article.canonical}
   jsonLd={[articleLD, breadcrumbLD]}
 >
-  <div class="article-page">
-    <div class="container">
 
+  <!-- ── Hero article ─────────────────────────────────────────── -->
+  <div class="article-hero">
+    <div class="article-hero__img-wrap">
+      <img src={heroImg} alt={article.titre} class="article-hero__img" width="1200" height="400" loading="eager" />
+      <div class="article-hero__overlay"></div>
+    </div>
+    <div class="article-hero__content">
       <!-- Breadcrumb -->
-      <nav class="breadcrumb" aria-label="Fil d'Ariane">
+      <nav class="article-breadcrumb" aria-label="Fil d'Ariane">
         <a href="/">Accueil</a>
         <span>›</span>
         {complement && <><a href={`/complement/${complement.slug}`}>{complement.nom}</a><span>›</span></>}
-        <span>{article.titre}</span>
+        {isRecupCategory && <><a href="/articles">Récupération sportive</a><span>›</span></>}
+        <span>{article.type === 'comparatif' ? 'Comparatifs' : article.type === 'conseil' ? 'Conseils' : 'Tests'}</span>
       </nav>
 
-      <div class="article-layout">
-        <!-- Main content -->
-        <article class="article-main">
-          <!-- Header -->
-          <header class="article-header">
-            <div class="article-header__tags">
-              <span class={`card__tag ${article.type === 'conseil' ? 'card__tag--blue' : ''}`}>
-                {typeLabels[article.type] ?? article.type}
-              </span>
-              {article.objectif && <span class="card__tag card__tag--blue">{article.objectif}</span>}
-            </div>
-            <h1 class="article-header__title">{article.titre}</h1>
-            <div class="article-header__meta">
-              <span>Par la rédaction EDP Nutrition</span>
-              <span>·</span>
-              <time datetime={article.date}>{dateFormatted}</time>
-              {updatedFormatted && (
-                <><span>·</span><span class="article-meta__updated">Mis à jour le {updatedFormatted}</span></>
-              )}
-              <span>·</span>
-              <span>{article.duree} de lecture</span>
-            </div>
-            <p class="article-header__intro">{article.extrait}</p>
-          </header>
+      <!-- Tag + Titre -->
+      <span class="article-hero__tag">{typeLabels[article.type] ?? article.type}</span>
+      <h1 class="article-hero__title">{article.titre}</h1>
 
-          <!-- Content -->
-          {article.contenu_html && (
-            <div class="article-content" set:html={article.contenu_html} />
-          )}
-
-          <!-- Author box -->
-          <div class="author-box">
-            <div class="author-box__avatar">EDP</div>
-            <div class="author-box__name">La Rédaction EDP Nutrition</div>
-            <div class="author-box__role">Experts en compléments alimentaires</div>
-            <p class="author-box__bio">Notre équipe est composée de naturopathes, diététiciens et coaches sportifs spécialisés en micronutrition. Tous nos articles sont basés sur des études scientifiques et mis à jour régulièrement.</p>
-            <a href="/qui-sommes-nous" class="btn btn--blue" style="margin-top:8px">En savoir plus sur notre équipe</a>
-          </div>
-        </article>
-
-        <!-- Sidebar -->
-        <aside class="article-sidebar">
-          {complement && (
-            <div class="sidebar-box">
-              <h3 class="sidebar-box__title">Guide complet</h3>
-              <a href={`/complement/${complement.slug}`} class="sidebar-complement-link">
-                <strong>{complement.nom}</strong>
-                <p>{complement.description}</p>
-                <span class="sidebar-complement-link__cta">Voir le guide complet →</span>
-              </a>
-            </div>
-          )}
-
-          {article.marque_produit && article.marque_lien && (
-            <div class="sidebar-box sidebar-box--cta">
-              <h3 class="sidebar-box__title">Notre sélection</h3>
-              <p class="sidebar-box__desc">{article.marque_description ?? `Découvrez ${article.marque_produit}`}</p>
-              <a href={article.marque_lien} class="btn btn--primary" target="_blank" rel="noopener sponsored" style="width:100%;justify-content:center;">
-                Voir le produit →
-              </a>
-            </div>
-          )}
-
-          {relatedArticles.length > 0 && (
-            <div class="sidebar-box">
-              <h3 class="sidebar-box__title">Articles similaires</h3>
-              <div class="sidebar-related">
-                {relatedArticles.map(a => (
-                  <a href={`/articles/${a.slug}`} class="sidebar-related__item">
-                    <span class="sidebar-related__tag">{typeLabels[a.type]}</span>
-                    <span class="sidebar-related__title">{a.titre}</span>
-                  </a>
-                ))}
-              </div>
-            </div>
-          )}
-        </aside>
+      <!-- Méta-badges EDP style -->
+      <div class="article-meta-badges">
+        {article.type === 'comparatif' && (
+          <span class="meta-badge">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+            Produits comparés
+          </span>
+        )}
+        <span class="meta-badge">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          {article.duree} de lecture
+        </span>
+        <span class="meta-badge">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          Mis à jour {updatedFormatted ?? dateFormatted}
+        </span>
+        <span class="meta-badge meta-badge--verified">
+          ✓ Vérifié par nos experts
+        </span>
       </div>
-
     </div>
   </div>
+
+  <!-- ── Layout principal ──────────────────────────────────────── -->
+  <div class="article-wrap">
+    <div class="article-layout">
+
+      <!-- CONTENU PRINCIPAL -->
+      <main class="article-main">
+
+        <!-- Intro encadrée -->
+        <div class="article-intro-box">
+          <p>{article.extrait}</p>
+        </div>
+
+        <!-- Contenu généré par le robot -->
+        {article.contenu_html && (
+          <div class="article-content" set:html={article.contenu_html} />
+        )}
+
+        <!-- Encart auteur -->
+        <div class="edp-article-author-box">
+          <div class="edp-article-author-box__avatar">CG</div>
+          <div class="edp-article-author-box__name">La Rédaction Complément Guide</div>
+          <div class="edp-article-author-box__role">Experts en nutrition & compléments alimentaires</div>
+          <div class="edp-article-author-box__bio">
+            Notre équipe est composée de naturopathes, diététiciens et coaches sportifs spécialisés en micronutrition.
+            Tous nos articles sont basés sur des données scientifiques et mis à jour régulièrement.
+          </div>
+          <a href="/qui-sommes-nous" class="edp-article-author-box__cta">
+            En savoir plus sur notre équipe
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+        </div>
+
+      </main>
+
+      <!-- SIDEBAR -->
+      <aside class="article-sidebar">
+
+        <!-- Guide complément ou catégorie récup -->
+        {complement && (
+          <div class="sidebar-box">
+            <div class="sidebar-box__label">Guide complet</div>
+            <a href={`/complement/${complement.slug}`} class="sidebar-guide-link">
+              <strong>{complement.nom}</strong>
+              <p>{complement.description}</p>
+              <span class="sidebar-guide-link__cta">Voir le guide →</span>
+            </a>
+          </div>
+        )}
+        {isRecupCategory && recuperation && (
+          <div class="sidebar-box">
+            <div class="sidebar-box__label">Catégorie</div>
+            <a href="/articles" class="sidebar-guide-link">
+              <strong>🏃 {recuperation.nom}</strong>
+              <p>{recuperation.description}</p>
+              <span class="sidebar-guide-link__cta">Tous les articles récupération →</span>
+            </a>
+          </div>
+        )}
+
+        <!-- CTA partenaire si disponible -->
+        {article.marque_produit && article.marque_lien && (
+          <div class="sidebar-box sidebar-box--cta">
+            <div class="sidebar-box__label">Notre sélection</div>
+            <p class="sidebar-cta__desc">{article.marque_description ?? `Découvrez ${article.marque_produit}`}</p>
+            <a href={article.marque_lien} class="sidebar-cta__btn" target="_blank" rel="noopener sponsored">
+              Voir le produit →
+            </a>
+          </div>
+        )}
+
+        <!-- Articles similaires -->
+        {relatedArticles.length > 0 && (
+          <div class="sidebar-box">
+            <div class="sidebar-box__label">Articles similaires</div>
+            <div class="sidebar-related">
+              {relatedArticles.map(a => (
+                <a href={`/articles/${a.slug}`} class="sidebar-related__item">
+                  <span class="sidebar-related__tag">{typeLabels[a.type]}</span>
+                  <span class="sidebar-related__title">{a.titre}</span>
+                </a>
+              ))}
+            </div>
+          </div>
+        )}
+
+      </aside>
+    </div>
+  </div>
+
 </Layout>
 
 <style>
-.article-page { padding: 32px 0 64px; }
+/* ── HERO ARTICLE ─────────────────────────────────────────────── */
+.article-hero {
+  position: relative;
+  min-height: 340px;
+  display: flex;
+  align-items: flex-end;
+  overflow: hidden;
+}
+.article-hero__img-wrap {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+.article-hero__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.article-hero__overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(15,23,42,0.92) 0%, rgba(15,23,42,0.55) 60%, rgba(15,23,42,0.2) 100%);
+}
+.article-hero__content {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 1060px;
+  margin: 0 auto;
+  padding: 32px 24px 40px;
+}
 
+/* Breadcrumb dans hero */
+.article-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: rgba(255,255,255,.5);
+  margin-bottom: 12px;
+  font-family: 'Montserrat', sans-serif;
+  flex-wrap: wrap;
+}
+.article-breadcrumb a { color: rgba(255,255,255,.5); text-decoration: none; transition: color .15s; }
+.article-breadcrumb a:hover { color: rgba(255,255,255,.85); }
+
+.article-hero__tag {
+  display: inline-block;
+  background: #3B82F6;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 5px;
+  text-transform: uppercase;
+  font-family: 'Montserrat', sans-serif;
+  margin-bottom: 12px;
+  letter-spacing: 0.5px;
+}
+.article-hero__title {
+  font-size: clamp(22px, 3.5vw, 36px);
+  font-weight: 800;
+  color: #fff;
+  line-height: 1.2;
+  margin-bottom: 18px;
+  font-family: 'Montserrat', sans-serif;
+  max-width: 820px;
+}
+
+/* Méta-badges */
+.article-meta-badges {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.meta-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(255,255,255,.12);
+  color: rgba(255,255,255,.75);
+  font-size: 12px;
+  font-weight: 500;
+  padding: 5px 12px;
+  border-radius: 999px;
+  font-family: 'Montserrat', sans-serif;
+  border: 1px solid rgba(255,255,255,.15);
+}
+.meta-badge--verified {
+  background: rgba(59,130,246,.2);
+  color: #93C5FD;
+  border-color: rgba(59,130,246,.3);
+}
+
+/* ── LAYOUT PRINCIPAL ─────────────────────────────────────────── */
+.article-wrap {
+  background: #F9FAFB;
+  padding: 40px 0 64px;
+}
 .article-layout {
+  max-width: 1060px;
+  margin: 0 auto;
+  padding: 0 24px;
   display: grid;
-  grid-template-columns: 1fr 320px;
-  gap: 48px;
+  grid-template-columns: 1fr 300px;
+  gap: 40px;
   align-items: start;
 }
 @media (max-width: 1024px) {
@@ -174,86 +335,429 @@ const breadcrumbLD = {
   .article-sidebar { display: none; }
 }
 
-.article-header { margin-bottom: 32px; }
-.article-header__tags { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
-.article-header__title {
-  font-size: 38px;
-  font-weight: 800;
-  line-height: 1.15;
-  margin-bottom: 16px;
-  color: var(--color-text);
+/* ── CONTENU PRINCIPAL ────────────────────────────────────────── */
+.article-intro-box {
+  background: #EFF6FF;
+  border-left: 4px solid #3B82F6;
+  border-radius: 0 8px 8px 0;
+  padding: 18px 22px;
+  font-size: 16px;
+  color: #1E40AF;
+  line-height: 1.65;
+  margin-bottom: 32px;
+  font-family: 'Roboto', sans-serif;
 }
-.article-header__meta {
+
+/* Article content */
+.article-content {
+  font-family: 'Roboto', sans-serif;
+  font-size: 17px;
+  line-height: 1.78;
+  color: #374151;
+}
+.article-content h2 {
+  font-size: 22px;
+  font-weight: 800;
+  margin: 48px 0 16px;
+  color: #0F172A;
+  font-family: 'Montserrat', sans-serif;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #E2E8F0;
+  letter-spacing: -0.3px;
+}
+.article-content h2:first-child { margin-top: 8px; }
+.article-content h3 {
+  font-size: 18px;
+  font-weight: 700;
+  margin: 30px 0 12px;
+  color: #1E293B;
+  font-family: 'Montserrat', sans-serif;
+}
+.article-content figure {
+  margin: 28px 0;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+}
+.article-content figure img { display: block; width: 100%; }
+.article-content figure figcaption {
+  background: #F1F5F9;
+  padding: 10px 16px;
+  font-size: 13px;
+  color: #64748B;
+  font-style: italic;
+  line-height: 1.5;
+}
+.article-content p { margin-bottom: 18px; }
+.article-content ul, .article-content ol { padding-left: 24px; margin-bottom: 18px; }
+.article-content li { margin-bottom: 8px; }
+.article-content strong { color: #1A1A1A; font-weight: 700; }
+.article-content a { color: #3B82F6; font-weight: 500; text-decoration: none; }
+.article-content a:hover { color: #2563EB; text-decoration: underline; }
+
+/* Réponse directe */
+.article-content .answer-direct {
+  background: #EFF6FF;
+  border: 1px solid #BFDBFE;
+  border-radius: 8px;
+  padding: 18px 22px;
+  font-size: 16px;
+  color: #1E40AF;
+  margin-bottom: 28px;
+}
+
+/* Callouts */
+.article-content .callout-retenir,
+.article-content .callout-conseil,
+.article-content .callout-alerte {
+  border-radius: 10px;
+  padding: 18px 22px;
+  margin: 28px 0;
+  font-size: 15.5px;
+  line-height: 1.65;
+}
+.article-content .callout-retenir {
+  background: #F0FDF4;
+  border-left: 4px solid #22C55E;
+}
+.article-content .callout-conseil {
+  background: #EFF6FF;
+  border-left: 4px solid #3B82F6;
+}
+.article-content .callout-alerte {
+  background: #FFFBEB;
+  border-left: 4px solid #F59E0B;
+}
+.article-content .callout-retenir strong { color: #15803D; }
+.article-content .callout-conseil strong { color: #1D4ED8; }
+.article-content .callout-alerte strong { color: #B45309; }
+
+/* Tables */
+.article-content table { width: 100%; border-collapse: collapse; margin: 28px 0; font-size: 15px; border-radius: 8px; overflow: hidden; }
+.article-content th { background: #1E293B; color: #fff; font-family: 'Montserrat', sans-serif; font-size: 12px; font-weight: 700; text-align: left; padding: 12px 16px; }
+.article-content td { border-bottom: 1px solid #E5E7EB; padding: 11px 16px; vertical-align: top; }
+.article-content tr:nth-child(even) td { background: #F9FAFB; }
+
+/* Steps */
+.article-content ol.steps { padding-left: 0; list-style: none; }
+.article-content ol.steps li {
+  padding: 14px 16px 14px 52px;
+  position: relative;
+  border-bottom: 1px solid #E5E7EB;
+  counter-increment: step;
+}
+.article-content ol.steps li::before {
+  content: counter(step);
+  position: absolute;
+  left: 12px;
+  top: 14px;
+  width: 28px;
+  height: 28px;
+  background: #3B82F6;
+  color: #fff;
+  border-radius: 50%;
+  font-size: 13px;
+  font-weight: 700;
+  font-family: 'Montserrat', sans-serif;
   display: flex;
   align-items: center;
-  flex-wrap: wrap;
-  gap: 8px;
+  justify-content: center;
+}
+.article-content ol.steps { counter-reset: step; }
+
+/* FAQ — fonctionne avec ou sans wrapper .faq */
+.article-content details,
+.article-content .faq details {
+  border: 1px solid #E5E7EB;
+  border-radius: 10px;
+  margin-bottom: 10px;
+  overflow: hidden;
+  transition: box-shadow .15s;
+}
+.article-content details:hover,
+.article-content .faq details:hover {
+  box-shadow: 0 2px 10px rgba(0,0,0,.06);
+}
+.article-content summary,
+.article-content .faq summary {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 15.5px;
+  font-weight: 600;
+  color: #1A1A1A;
+  padding: 16px 18px;
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background: #fff;
+  user-select: none;
+}
+.article-content summary::-webkit-details-marker { display: none; }
+.article-content summary::after,
+.article-content .faq summary::after {
+  content: '+';
+  font-size: 20px;
+  font-weight: 300;
+  color: #3B82F6;
+  flex-shrink: 0;
+  transition: transform .2s;
+}
+.article-content details[open] summary::after,
+.article-content .faq details[open] summary::after { content: '×'; }
+.article-content details > p,
+.article-content details > div,
+.article-content .faq details > p,
+.article-content .faq details > div {
+  padding: 4px 18px 18px;
+  color: #4B5563;
+  font-size: 15px;
+  line-height: 1.7;
+  background: #FAFAFA;
+}
+.article-content details[open] summary {
+  border-bottom: 1px solid #E5E7EB;
+  background: #F8FBFF;
+}
+
+/* Sources */
+.article-content ul.sources { list-style: none; padding: 0; }
+.article-content ul.sources li { padding: 6px 0; border-bottom: 1px solid #F3F4F6; font-size: 13px; }
+.article-content ul.sources a { color: #6B7280; }
+.article-content ul.sources a:hover { color: #3B82F6; }
+
+/* ── FICHES PRODUITS (comparatifs TOP N, générées par le robot) ── */
+.article-content .edp-rank-card {
+  background: #fff;
+  border: 1px solid #E5E7EB;
+  border-radius: 12px;
+  padding: 24px;
+  margin: 28px 0;
+  position: relative;
+  transition: box-shadow .2s, border-color .2s;
+}
+.article-content .edp-rank-card:hover { box-shadow: 0 4px 20px rgba(0,0,0,.07); }
+.article-content .edp-rank-card--top {
+  border-color: #3B82F6;
+  border-width: 2px;
+}
+.article-content .edp-rank-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px; height: 36px;
+  background: #1E293B;
+  color: #fff;
+  border-radius: 50%;
+  font-size: 16px;
+  font-weight: 800;
+  font-family: 'Montserrat', sans-serif;
+  margin-bottom: 6px;
+}
+.article-content .edp-rank-card--top .edp-rank-num { background: #3B82F6; }
+.article-content .edp-rank-badge {
+  display: inline-block;
+  background: #FEF3C7;
+  color: #92400E;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 5px;
+  font-family: 'Montserrat', sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-left: 8px;
+  border: 1px solid #FCD34D;
+}
+.article-content .edp-rank-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #1A1A1A;
+  margin: 12px 0 4px;
+  font-family: 'Montserrat', sans-serif;
+}
+.article-content .edp-rank-sub {
   font-size: 14px;
-  color: var(--color-text-light);
-  margin-bottom: 20px;
+  color: #6B7280;
+  margin-bottom: 16px;
+  font-style: italic;
 }
-.article-meta__updated { color: #16A34A; font-weight: 500; }
-.article-header__intro {
-  font-size: 18px;
-  color: var(--color-text-light);
-  line-height: 1.65;
-  padding: 20px 24px;
-  background: var(--color-section-bg);
-  border-radius: var(--radius-box);
-  border-left: 4px solid var(--color-cta);
+.article-content .edp-rank-pros-cons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin: 16px 0;
+}
+.article-content .edp-rank-pros,
+.article-content .edp-rank-cons {
+  background: #F9FAFB;
+  border-radius: 8px;
+  padding: 14px 16px;
+}
+.article-content .edp-rank-pros strong { color: #16A34A; font-size: 13px; font-family: 'Montserrat', sans-serif; text-transform: uppercase; letter-spacing: 0.5px; }
+.article-content .edp-rank-cons strong { color: #DC2626; font-size: 13px; font-family: 'Montserrat', sans-serif; text-transform: uppercase; letter-spacing: 0.5px; }
+.article-content .edp-rank-pros ul,
+.article-content .edp-rank-cons ul { font-size: 14px; padding-left: 18px; margin-top: 8px; }
+.article-content .edp-rank-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #3B82F6;
+  color: #fff !important;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 12px 22px;
+  border-radius: 8px;
+  text-decoration: none !important;
+  font-family: 'Montserrat', sans-serif;
+  transition: background .2s;
+  margin-top: 12px;
+}
+.article-content .edp-rank-cta:hover { background: #2563EB; }
+.article-content .edp-rank-promo {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #FFF8E7 0%, #FFEFC4 100%);
+  border: 1px solid #EDBB5F;
+  border-radius: 8px;
+  padding: 10px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #8B6914;
+  margin: 8px 0 0 12px;
+  font-family: 'Montserrat', sans-serif;
+}
+@media (max-width: 640px) {
+  .article-content .edp-rank-pros-cons { grid-template-columns: 1fr; }
+  .article-content .edp-rank-promo { margin-left: 0; margin-top: 8px; }
 }
 
-@media (max-width: 768px) {
-  .article-header__title { font-size: 28px; }
+/* ── AUTEUR ───────────────────────────────────────────────────── */
+.edp-article-author-box {
+  background: #F6F7F8;
+  border-radius: 12px;
+  padding: 32px 36px;
+  text-align: center;
+  margin: 48px 0 0;
+  font-family: 'Montserrat', sans-serif;
 }
-
-/* Author box */
-.author-box__avatar {
-  width: 64px;
-  height: 64px;
-  background: var(--color-text);
+.edp-article-author-box__avatar {
+  width: 72px; height: 72px;
+  background: #1E293B;
   color: #fff;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: var(--font-heading);
-  font-size: 14px;
+  font-size: 18px;
   font-weight: 700;
-  margin: 0 auto 16px;
+  margin: 0 auto 14px;
 }
+.edp-article-author-box__name { font-size: 18px; font-weight: 700; color: #1A1A1A; margin-bottom: 4px; }
+.edp-article-author-box__role { font-size: 13px; color: #6B7280; font-weight: 500; margin-bottom: 14px; }
+.edp-article-author-box__bio {
+  font-size: 14px;
+  color: #4B5563;
+  line-height: 1.65;
+  max-width: 540px;
+  margin: 0 auto 20px;
+  text-align: left;
+  font-family: 'Roboto', sans-serif;
+}
+.edp-article-author-box__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #3B82F6;
+  color: #fff !important;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 11px 22px;
+  border-radius: 8px;
+  text-decoration: none !important;
+  transition: background .2s;
+}
+.edp-article-author-box__cta:hover { background: #2563EB; }
 
-/* Sidebar */
-.article-sidebar { position: sticky; top: 88px; display: flex; flex-direction: column; gap: 20px; }
+/* ── SIDEBAR ──────────────────────────────────────────────────── */
+.article-sidebar {
+  position: sticky;
+  top: 82px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
 .sidebar-box {
-  background: var(--color-white);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-card);
-  padding: 20px;
+  background: #fff;
+  border: 1px solid #E5E7EB;
+  border-radius: 12px;
+  padding: 18px 20px;
 }
 .sidebar-box--cta {
-  background: linear-gradient(135deg, #FFF7F5 0%, #FFF0EB 100%);
-  border-color: #FFD5C8;
+  background: linear-gradient(135deg, #EFF6FF 0%, #DBEAFE 100%);
+  border-color: #BFDBFE;
 }
-.sidebar-box__title {
-  font-family: var(--font-heading);
-  font-size: 14px;
+.sidebar-box__label {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 11px;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-  color: var(--color-text-light);
-  margin-bottom: 14px;
+  letter-spacing: 1px;
+  color: #3B82F6;
+  margin-bottom: 12px;
 }
-.sidebar-box__desc { font-size: 14px; color: var(--color-text-body); margin-bottom: 14px; line-height: 1.5; }
+.sidebar-guide-link { display: block; text-decoration: none; }
+.sidebar-guide-link strong {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 16px;
+  color: #1A1A1A;
+  display: block;
+  margin-bottom: 6px;
+}
+.sidebar-guide-link p { font-size: 13px; color: #6B7280; line-height: 1.5; margin-bottom: 10px; }
+.sidebar-guide-link__cta { font-size: 13px; font-weight: 600; color: #3B82F6; font-family: 'Montserrat', sans-serif; }
 
-.sidebar-complement-link { display: block; text-decoration: none; }
-.sidebar-complement-link strong { font-family: var(--font-heading); font-size: 16px; color: var(--color-text); display: block; margin-bottom: 6px; }
-.sidebar-complement-link p { font-size: 13px; color: var(--color-text-light); line-height: 1.5; margin-bottom: 10px; }
-.sidebar-complement-link__cta { font-size: 13px; font-weight: 600; color: var(--color-accent); }
+.sidebar-cta__desc { font-size: 14px; color: #374151; line-height: 1.5; margin-bottom: 14px; }
+.sidebar-cta__btn {
+  display: block;
+  background: #3B82F6;
+  color: #fff;
+  text-align: center;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: 'Montserrat', sans-serif;
+  text-decoration: none;
+  transition: background .2s;
+}
+.sidebar-cta__btn:hover { background: #2563EB; color: #fff; }
 
 .sidebar-related { display: flex; flex-direction: column; gap: 12px; }
 .sidebar-related__item { text-decoration: none; display: flex; flex-direction: column; gap: 4px; }
-.sidebar-related__tag { font-size: 11px; font-weight: 700; font-family: var(--font-heading); color: var(--color-cta); text-transform: uppercase; letter-spacing: 0.5px; }
-.sidebar-related__title { font-size: 14px; font-weight: 600; color: var(--color-text); line-height: 1.4; transition: color var(--transition); }
-.sidebar-related__item:hover .sidebar-related__title { color: var(--color-accent); }
+.sidebar-related__tag {
+  font-size: 11px;
+  font-weight: 700;
+  font-family: 'Montserrat', sans-serif;
+  color: #3B82F6;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.sidebar-related__title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1A1A1A;
+  line-height: 1.35;
+  transition: color .15s;
+  font-family: 'Montserrat', sans-serif;
+}
+.sidebar-related__item:hover .sidebar-related__title { color: #3B82F6; }
+
+@media (max-width: 768px) {
+  .article-wrap { padding: 24px 0 48px; }
+  .article-layout { padding: 0 16px; }
+  .edp-article-author-box { padding: 24px 20px; }
+}
 </style>

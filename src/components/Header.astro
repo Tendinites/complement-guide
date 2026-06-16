@@ -1,32 +1,44 @@
 ---
 const nav = [
   {
-    label: 'Compléments alimentaires',
+    label: 'Compléments',
     items: [
-      { href: '/complement/collagene', label: 'Collagène' },
-      { href: '/complement/whey', label: 'Whey' },
-      { href: '/complement/omega-3', label: 'Oméga 3' },
-      { href: '/complement/vitamine-d', label: 'Vitamine D' },
-      { href: '/complement/magnesium', label: 'Magnésium' },
-      { href: '/complement/creatine', label: 'Créatine' },
-      { href: '/complement/probiotiques', label: 'Probiotiques' },
-      { href: '/complement/multivitamines', label: 'Multivitamines' },
-      { href: '/complement/ashwagandha', label: 'Ashwagandha' },
-      { href: '/complement/zinc', label: 'Zinc' },
-      { href: '/complement/fer', label: 'Fer' },
+      { href: '/complement/omega-3',        label: 'Oméga 3',        emoji: '🐟' },
+      { href: '/complement/whey',           label: 'Whey',           emoji: '💪' },
+      { href: '/complement/magnesium',      label: 'Magnésium',      emoji: '⚡' },
+      { href: '/complement/creatine',       label: 'Créatine',       emoji: '🏋️' },
+      { href: '/complement/vitamine-d',     label: 'Vitamine D',     emoji: '☀️' },
+      { href: '/complement/probiotiques',   label: 'Probiotiques',   emoji: '🦠' },
+      { href: '/complement/collagene',      label: 'Collagène',      emoji: '✨' },
+      { href: '/complement/ashwagandha',    label: 'Ashwagandha',    emoji: '🌿' },
+      { href: '/complement/multivitamines', label: 'Multivitamines', emoji: '💊' },
+      { href: '/complement/zinc',           label: 'Zinc',           emoji: '🛡️' },
+      { href: '/complement/fer',            label: 'Fer',            emoji: '🩸' },
     ],
   },
-  { label: 'Conseils', href: '/conseils' },
+  {
+    label: 'Récupération',
+    items: [
+      { href: '/articles/pistolet-massage',   label: 'Pistolets massage',   emoji: '🔫' },
+      { href: '/articles/bottes-compression', label: 'Bottes compression',  emoji: '🥾' },
+      { href: '/articles/bain-froid',         label: 'Bain froid',          emoji: '🧊' },
+      { href: '/articles/foam-roller',        label: 'Foam roller',         emoji: '🪵' },
+      { href: '/articles/electrostimulation', label: 'Électrostimulation',  emoji: '⚡' },
+      { href: '/articles/cryotherapie',       label: 'Cryothérapie',        emoji: '❄️' },
+    ],
+  },
   { label: 'Comparatifs', href: '/comparatifs' },
-  { label: 'Tests & Avis', href: '/tests' },
+  { label: 'Conseils', href: '/conseils' },
+  { label: 'Articles', href: '/articles' },
 ];
 ---
 
 <header class="site-header">
-  <div class="header-inner container">
+  <div class="header-inner">
     <!-- Logo -->
-    <a href="/" class="header-logo" aria-label="EDP Nutrition - Accueil">
-      <span class="logo-text">EDP <span class="logo-accent">Nutrition</span></span>
+    <a href="/" class="header-logo" aria-label="Accueil">
+      <span class="logo-icon">🧬</span>
+      <span class="logo-text">Complément<span class="logo-accent">Guide</span></span>
     </a>
 
     <!-- Nav desktop -->
@@ -42,7 +54,10 @@ const nav = [
             </button>
             <div class="dropdown-menu">
               {item.items.map(sub => (
-                <a href={sub.href} class="dropdown-item">{sub.label}</a>
+                <a href={sub.href} class="dropdown-item">
+                  {sub.emoji && <span class="dropdown-emoji">{sub.emoji}</span>}
+                  {sub.label}
+                </a>
               ))}
             </div>
           </div>
@@ -61,20 +76,30 @@ const nav = [
   <!-- Mobile menu -->
   <div class="mobile-menu" id="mobile-menu" aria-hidden="true">
     <div class="mobile-menu__inner">
-      <a href="/complement/omega-3" class="mobile-link">Oméga 3</a>
-      <a href="/complement/magnesium" class="mobile-link">Magnésium</a>
-      <a href="/complement/vitamine-d" class="mobile-link">Vitamine D</a>
-      <a href="/complement/collagene" class="mobile-link">Collagène</a>
-      <a href="/complement/whey" class="mobile-link">Whey</a>
-      <a href="/complement/creatine" class="mobile-link">Créatine</a>
-      <a href="/complement/probiotiques" class="mobile-link">Probiotiques</a>
-      <a href="/complement/ashwagandha" class="mobile-link">Ashwagandha</a>
-      <a href="/complement/zinc" class="mobile-link">Zinc</a>
-      <a href="/complement/fer" class="mobile-link">Fer</a>
+      <div class="mobile-section-label">💊 Compléments</div>
+      <a href="/complement/omega-3"        class="mobile-link">🐟 Oméga 3</a>
+      <a href="/complement/whey"           class="mobile-link">💪 Whey</a>
+      <a href="/complement/magnesium"      class="mobile-link">⚡ Magnésium</a>
+      <a href="/complement/creatine"       class="mobile-link">🏋️ Créatine</a>
+      <a href="/complement/vitamine-d"     class="mobile-link">☀️ Vitamine D</a>
+      <a href="/complement/probiotiques"   class="mobile-link">🦠 Probiotiques</a>
+      <a href="/complement/collagene"      class="mobile-link">✨ Collagène</a>
+      <a href="/complement/ashwagandha"    class="mobile-link">🌿 Ashwagandha</a>
+      <a href="/complement/multivitamines" class="mobile-link">💊 Multivitamines</a>
+      <a href="/complement/zinc"           class="mobile-link">🛡️ Zinc</a>
+      <a href="/complement/fer"            class="mobile-link">🩸 Fer</a>
       <hr class="mobile-menu__sep" />
-      <a href="/conseils" class="mobile-link">Conseils</a>
+      <div class="mobile-section-label">🏃 Récupération</div>
+      <a href="/articles/pistolet-massage"   class="mobile-link">🔫 Pistolets massage</a>
+      <a href="/articles/bottes-compression" class="mobile-link">🥾 Bottes compression</a>
+      <a href="/articles/bain-froid"         class="mobile-link">🧊 Bain froid</a>
+      <a href="/articles/foam-roller"        class="mobile-link">🪵 Foam roller</a>
+      <a href="/articles/electrostimulation" class="mobile-link">⚡ Électrostimulation</a>
+      <a href="/articles/cryotherapie"       class="mobile-link">❄️ Cryothérapie</a>
+      <hr class="mobile-menu__sep" />
       <a href="/comparatifs" class="mobile-link">Comparatifs</a>
-      <a href="/tests" class="mobile-link">Tests & Avis</a>
+      <a href="/conseils"    class="mobile-link">Conseils</a>
+      <a href="/articles"    class="mobile-link">Tous les articles</a>
     </div>
   </div>
 </header>
@@ -84,78 +109,86 @@ const nav = [
   position: sticky;
   top: 0;
   z-index: 100;
-  background: #fff;
-  border-bottom: 1px solid var(--color-border);
-  box-shadow: 0 1px 8px rgba(0,0,0,0.05);
+  background: #1E293B;
+  box-shadow: 0 1px 0 rgba(255,255,255,0.06);
 }
 .header-inner {
+  max-width: 1060px;
+  margin: 0 auto;
+  padding: 0 24px;
   display: flex;
   align-items: center;
   gap: 32px;
-  height: 64px;
+  height: 62px;
 }
 .header-logo {
   text-decoration: none;
   flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
+.logo-icon { font-size: 20px; }
 .logo-text {
-  font-family: var(--font-heading);
-  font-size: 22px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 18px;
   font-weight: 800;
-  color: var(--color-text);
-  letter-spacing: -0.5px;
+  color: #fff;
+  letter-spacing: -0.3px;
 }
-.logo-accent { color: var(--color-cta); }
+.logo-accent { color: #60A5FA; }
 
 .header-nav {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 2px;
   flex: 1;
 }
 .nav-link {
-  font-family: var(--font-body);
-  font-size: 15px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 14px;
   font-weight: 500;
-  color: var(--color-text);
+  color: rgba(255,255,255,0.75);
   padding: 8px 12px;
   border-radius: 6px;
-  transition: background var(--transition), color var(--transition);
+  transition: color 0.15s, background 0.15s;
   text-decoration: none;
   white-space: nowrap;
 }
-.nav-link:hover { background: var(--color-section-bg); color: var(--color-cta); }
+.nav-link:hover { color: #fff; background: rgba(255,255,255,0.08); }
 
 .nav-dropdown { position: relative; }
 .nav-btn {
   display: flex;
   align-items: center;
   gap: 5px;
-  font-family: var(--font-body);
-  font-size: 15px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 14px;
   font-weight: 500;
-  color: var(--color-text);
+  color: rgba(255,255,255,0.75);
   background: none;
   border: none;
   padding: 8px 12px;
   border-radius: 6px;
   cursor: pointer;
-  transition: background var(--transition), color var(--transition);
+  transition: color 0.15s, background 0.15s;
   white-space: nowrap;
 }
-.nav-btn:hover { background: var(--color-section-bg); color: var(--color-cta); }
+.nav-btn:hover { color: #fff; background: rgba(255,255,255,0.08); }
 
 .dropdown-menu {
-  display: none;
   position: absolute;
-  top: calc(100% + 8px);
+  top: 100%;
   left: 0;
   background: #fff;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-card);
-  box-shadow: var(--shadow-hover);
-  padding: 8px;
-  min-width: 200px;
+  border: 1px solid #E5E7EB;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.14);
+  /* padding-top couvre le gap entre btn et menu → plus de fermeture accidentelle */
+  padding: 8px 8px 8px;
+  padding-top: 16px;
+  margin-top: -8px; /* remonte le menu pour couvrir le gap */
+  min-width: 220px;
   z-index: 200;
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -172,16 +205,21 @@ const nav = [
   transform: translateY(0);
 }
 .dropdown-item {
-  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 13.5px;
   font-weight: 500;
-  color: var(--color-text);
-  padding: 8px 12px;
+  font-family: 'Montserrat', sans-serif;
+  color: #374151;
+  padding: 9px 12px;
   border-radius: 8px;
   text-decoration: none;
-  transition: background var(--transition), color var(--transition);
+  transition: background 0.1s, color 0.1s;
   white-space: nowrap;
 }
-.dropdown-item:hover { background: var(--color-section-bg); color: var(--color-cta); }
+.dropdown-item:hover { background: #EFF6FF; color: #3B82F6; }
+.dropdown-emoji { font-size: 15px; flex-shrink: 0; }
 
 .burger {
   display: none;
@@ -197,15 +235,15 @@ const nav = [
   display: block;
   width: 22px;
   height: 2px;
-  background: var(--color-text);
+  background: rgba(255,255,255,0.8);
   border-radius: 2px;
   transition: all 0.2s ease;
 }
 
 .mobile-menu {
   display: none;
-  background: #fff;
-  border-top: 1px solid var(--color-border);
+  background: #1E293B;
+  border-top: 1px solid rgba(255,255,255,0.08);
 }
 .mobile-menu.open { display: block; }
 .mobile-menu__inner {
@@ -214,17 +252,28 @@ const nav = [
   flex-direction: column;
   gap: 2px;
 }
+.mobile-section-label {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #3B82F6;
+  padding: 4px 12px;
+  margin-bottom: 4px;
+}
 .mobile-link {
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 500;
-  color: var(--color-text);
+  font-family: 'Montserrat', sans-serif;
+  color: rgba(255,255,255,0.7);
   padding: 10px 12px;
   border-radius: 8px;
   text-decoration: none;
-  transition: background var(--transition);
+  transition: background 0.15s, color 0.15s;
 }
-.mobile-link:hover { background: var(--color-section-bg); color: var(--color-cta); }
-.mobile-menu__sep { border: none; border-top: 1px solid var(--color-border); margin: 8px 0; }
+.mobile-link:hover { background: rgba(255,255,255,0.08); color: #fff; }
+.mobile-menu__sep { border: none; border-top: 1px solid rgba(255,255,255,0.1); margin: 8px 0; }
 
 @media (max-width: 900px) {
   .header-nav { display: none; }

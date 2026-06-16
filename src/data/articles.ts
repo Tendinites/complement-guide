@@ -162,6 +162,86 @@ export const complements: Array<{
   },
 ];
 
+// Catégories d'appareils de récupération sportive
+export const appareilsRecup: Array<{
+  slug: string;
+  nom: string;
+  description: string;
+  objectifs: string[];
+  seoTitle: string;
+  seoDescription: string;
+  introText: string;
+  statA: { valeur: string; unite: string; label: string };
+  statB: { valeur: string; unite: string; label: string };
+}> = [
+  {
+    slug: 'pistolet-massage',
+    nom: 'Pistolet de massage',
+    description: "Percussion therapy pour la récupération musculaire, réduction des courbatures et mobilité.",
+    objectifs: ['Récupération sportive', 'Nutrition sportive'],
+    seoTitle: "Pistolet de massage : lequel choisir en 2026 ? Comparatif complet",
+    seoDescription: "Theragun, Hyperice, JOLT : quel pistolet de massage choisir ? Comparatif des meilleures percussions, amplitudes, silences et rapport qualité/prix.",
+    introText: "Le pistolet de massage par percussion est devenu l'outil de récupération incontournable des sportifs. Il agit sur les tissus musculaires profonds via des vibrations rapides (1000 à 3200 percussions/min), réduisant les tensions myofasciales, accélérant l'évacuation des métabolites et diminuant les douleurs musculaires d'apparition retardée (DOMS). Utilisé avant l'effort pour l'échauffement ou après pour la récupération, il est plébiscité par les kinésithérapeutes et préparateurs physiques.",
+    statA: { valeur: "-30", unite: "%", label: "de réduction des DOMS mesurée dans les études cliniques" },
+    statB: { valeur: "2-3", unite: "min", label: "par groupe musculaire suffisent pour un effet récupérateur optimal" },
+  },
+  {
+    slug: 'bottes-compression',
+    nom: 'Bottes de compression',
+    description: "Compression pneumatique pour drainer les jambes lourdes et accélérer la récupération.",
+    objectifs: ['Récupération sportive', 'Bien vieillir'],
+    seoTitle: "Bottes de compression : comparatif et guide d'achat 2026",
+    seoDescription: "NormaTec, Air Relax, JOLT : quelles bottes de compression choisir ? Comparatif des pression, modes et efficacité pour la récupération après le sport.",
+    introText: "Les bottes de compression pneumatique utilisent la compression séquentielle pour améliorer le retour veineux et lymphatique dans les membres inférieurs. Plébiscitées par les coureurs, cyclistes et triathlètes, elles réduisent la sensation de jambes lourdes, accélèrent l'élimination des déchets métaboliques et diminuent l'inflammation post-effort. Des études montrent une réduction significative des marqueurs inflammatoires et une récupération plus rapide entre deux séances intensives.",
+    statA: { valeur: "20-24", unite: "min", label: "de session recommandée pour un effet de récupération optimal" },
+    statB: { valeur: "-25", unite: "%", label: "de réduction du temps de récupération musculaire documentée" },
+  },
+  {
+    slug: 'cryotherapie',
+    nom: 'Cryothérapie',
+    description: "Thérapie par le froid : bains froids, cryo-chambres et leur impact sur la récupération.",
+    objectifs: ['Récupération sportive', 'Bien vieillir'],
+    seoTitle: "Cryothérapie : bienfaits, protocoles et équipements en 2026",
+    seoDescription: "Bain froid, cryo-chambre ou douche froide : quelle méthode est la plus efficace ? Protocoles scientifiques, durées et équipements pour la récupération sportive.",
+    introText: "La cryothérapie (exposition au froid) est l'une des méthodes de récupération les plus anciennes et les mieux documentées. Elle provoque une vasoconstriction suivie d'une vasodilatation réactionnelle, réduisant l'inflammation locale, les DOMS et la fatigue perçue. L'immersion en eau froide (10-15°C pendant 10-15 minutes), la cryothérapie corps entier (-110°C) et les douches froides sont les protocoles les plus étudiés chez les sportifs de haut niveau.",
+    statA: { valeur: "10-15", unite: "°C", label: "température optimale pour l'immersion en eau froide (études cliniques)" },
+    statB: { valeur: "-40", unite: "%", label: "de réduction de l'inflammation mesurée après cryothérapie corps entier" },
+  },
+  {
+    slug: 'foam-roller',
+    nom: 'Foam Roller',
+    description: "Auto-massage myofascial pour la mobilité, la flexibilité et la récupération.",
+    objectifs: ['Récupération sportive', 'Bien vieillir'],
+    seoTitle: "Foam Roller : lequel choisir et comment l'utiliser en 2026 ?",
+    seoDescription: "Foam roller lisse, vibrant ou avec picots : notre comparatif des meilleurs rouleaux de massage. Techniques, durées et bienfaits prouvés pour la récupération.",
+    introText: "Le foam roller est l'outil d'auto-massage myofascial le plus accessible du marché. En appliquant une pression contrôlée sur les fascias et les muscles, il relâche les points de tension (trigger points), améliore la circulation locale et augmente l'amplitude de mouvement. Utilisé en échauffement ou en récupération, son efficacité est confirmée par de nombreuses études sur la flexibilité, la réduction des courbatures et la performance à court terme.",
+    statA: { valeur: "+10", unite: "%", label: "d'amélioration de la flexibilité mesurée après 4 semaines de pratique" },
+    statB: { valeur: "30-60", unite: "sec", label: "par point de tension pour un relâchement myofascial efficace" },
+  },
+  {
+    slug: 'electrostimulation',
+    nom: 'Électrostimulation',
+    description: "EMS et TENS pour la récupération musculaire, la force et la gestion de la douleur.",
+    objectifs: ['Récupération sportive', 'Nutrition sportive'],
+    seoTitle: "Électrostimulation (EMS) : bienfaits, appareils et protocoles 2026",
+    seoDescription: "EMS pour la récupération ou la force, TENS pour la douleur : guide complet des appareils d'électrostimulation, programmes et résultats attendus.",
+    introText: "L'électrostimulation musculaire (EMS) utilise des impulsions électriques pour provoquer des contractions musculaires involontaires ou favoriser la récupération active. En mode récupération (fréquences basses), elle stimule la circulation sanguine et réduit les tensions. En mode renforcement, elle complète l'entraînement conventionnel. Le TENS (stimulation nerveuse électrique transcutanée) cible spécifiquement la gestion de la douleur chronique ou post-effort.",
+    statA: { valeur: "+16", unite: "%", label: "de gain de force musculaire mesuré avec l'EMS en complément de l'entraînement" },
+    statB: { valeur: "20-30", unite: "min", label: "de session EMS récupération recommandée après effort intense" },
+  },
+  {
+    slug: 'bain-froid',
+    nom: 'Bain froid',
+    description: "Ice bath et plonges froides : protocoles, bénéfices et meilleurs équipements.",
+    objectifs: ['Récupération sportive', 'Bien vieillir'],
+    seoTitle: "Bain froid (ice bath) : bienfaits, protocoles et meilleurs équipements 2026",
+    seoDescription: "Ice bath, baignoire froid ou tonneau : guide complet pour pratiquer l'immersion froide à la maison. Protocoles scientifiques, durées et comparatif des équipements.",
+    introText: "L'immersion en eau froide (ice bath) est la méthode de récupération la plus utilisée dans le sport de haut niveau. En plongeant dans une eau à 10-15°C pendant 10-15 minutes, on provoque une vasoconstriction puissante qui réduit l'inflammation musculaire, diminue la perception de la douleur et accélère la récupération entre deux séances. Rendue populaire par Wim Hof, la pratique régulière est aussi associée à des bénéfices sur l'immunité et le système nerveux autonome.",
+    statA: { valeur: "10-15", unite: "min", label: "durée d'immersion recommandée par la science pour la récupération" },
+    statB: { valeur: "+19", unite: "%", label: "d'amélioration de la récupération musculaire vs repos passif" },
+  },
+];
+
 // Objectifs de santé (navigation secondaire homepage)
 export const objectifs = [
   { slug: 'perte-de-poids', nom: 'Perte de poids', icon: '⚖️' },
@@ -169,8 +249,8 @@ export const objectifs = [
   { slug: 'digestion', nom: 'Digestion', icon: '🌀' },
   { slug: 'stress', nom: 'Stress', icon: '🧘' },
   { slug: 'nutrition-sportive', nom: 'Nutrition sportive', icon: '💪' },
+  { slug: 'recuperation-sportive', nom: 'Récupération sportive', icon: '🏃' },
   { slug: 'sante-feminine', nom: 'Santé féminine', icon: '🌸' },
-  { slug: 'cosmetique', nom: 'Cosmétique', icon: '✨' },
 ];
 
 export function findComplement(slug: string) {

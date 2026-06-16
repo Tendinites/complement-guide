@@ -1,103 +1,536 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-import { articles, complements } from '../../data/articles';
+import { articles, complements, appareilsRecup } from '../../data/articles';
 
 const typeLabels: Record<string, string> = {
   comparatif: 'Comparatif',
-  conseil: 'Conseil',
-  test: 'Test & Avis',
+  conseil:    'Conseil',
+  test:       'Test & Avis',
   'code-promo': 'Code Promo',
 };
 
-// Groupe par complément (3 articles max par complément)
-const parComplement = complements
+// Images hero par slug de complément
+const heroImgs: Record<string, string> = {
+  'omega-3':          'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?w=480&h=280&fit=crop&auto=format',
+  'magnesium':        'https://images.unsplash.com/photo-1628771065518-0d82f1938462?w=480&h=280&fit=crop&auto=format',
+  'vitamine-d':       'https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=480&h=280&fit=crop&auto=format',
+  'collagene':        'https://images.unsplash.com/photo-1515377905703-c4788e51af15?w=480&h=280&fit=crop&auto=format',
+  'whey':             'https://images.unsplash.com/photo-1593095948071-474c5cc2989d?w=480&h=280&fit=crop&auto=format',
+  'creatine':         'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=480&h=280&fit=crop&auto=format',
+  'probiotiques':     'https://images.unsplash.com/photo-1574316071802-0d684efa7bf5?w=480&h=280&fit=crop&auto=format',
+  'multivitamines':   'https://images.unsplash.com/photo-1512069772995-ec65ed45afd6?w=480&h=280&fit=crop&auto=format',
+  'ashwagandha':      'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=480&h=280&fit=crop&auto=format',
+  'zinc':             'https://images.unsplash.com/photo-1587854692152-cbe660dbde88?w=480&h=280&fit=crop&auto=format',
+  'fer':              'https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=480&h=280&fit=crop&auto=format',
+  'pistolet-massage':   'https://plus.unsplash.com/premium_photo-1682092304863-28846294f68c?w=480&h=260&fit=crop&auto=format',
+  'bottes-compression': 'https://images.pexels.com/photos/20860588/pexels-photo-20860588.jpeg?auto=compress&cs=tinysrgb&w=480&h=260&fit=crop',
+  'cryotherapie':       'https://images.pexels.com/photos/7041577/pexels-photo-7041577.jpeg?auto=compress&cs=tinysrgb&w=480&h=260&fit=crop',
+  'foam-roller':        'https://plus.unsplash.com/premium_photo-1661923103649-0223557b8589?w=480&h=260&fit=crop&auto=format',
+  'electrostimulation': 'https://images.pexels.com/photos/7108341/pexels-photo-7108341.jpeg?auto=compress&cs=tinysrgb&w=480&h=260&fit=crop',
+  'bain-froid':         'https://images.pexels.com/photos/14815623/pexels-photo-14815623.jpeg?auto=compress&cs=tinysrgb&w=480&h=260&fit=crop',
+};
+
+// Couleurs par catégorie
+const catColors: Record<string, string> = {
+  'omega-3': '#DBEAFE', 'magnesium': '#FEF9C3', 'vitamine-d': '#FEF3C7',
+  'collagene': '#FCE7F3', 'whey': '#DCFCE7', 'creatine': '#EDE9FE',
+  'probiotiques': '#D1FAE5', 'multivitamines': '#E0F2FE', 'ashwagandha': '#FEF9C3',
+  'zinc': '#F1F5F9', 'fer': '#FEE2E2',
+  'pistolet-massage': '#DBEAFE', 'bottes-compression': '#EDE9FE',
+  'cryotherapie': '#CFFAFE', 'foam-roller': '#DCFCE7',
+  'electrostimulation': '#FFF7ED', 'bain-froid': '#E0F2FE',
+};
+
+// Groupes articles compléments
+const groupsComplements = complements
   .map(c => ({
-    complement: c,
-    articles: articles.filter(a =>
-      a.complement.toLowerCase() === c.nom.toLowerCase() ||
-      a.complement === c.slug
-    ).slice(0, 3),
+    slug: c.slug, nom: c.nom, description: c.description,
+    href: `/complement/${c.slug}`,
+    arts: articles.filter(a => a.complement === c.slug || a.complement.toLowerCase() === c.nom.toLowerCase()),
   }))
-  .filter(g => g.articles.length > 0);
+  .filter(g => g.arts.length > 0);
+
+// Groupes articles récupération
+const groupsRecup = appareilsRecup
+  .map(r => ({
+    slug: r.slug, nom: r.nom, description: r.description,
+    href: `/articles/${r.slug}`,
+    arts: articles.filter(a => a.complement === r.slug),
+  }))
+  .filter(g => g.arts.length > 0);
+
+const totalArticles = articles.length;
 ---
 
 <Layout
-  title="Tous les articles — EDP Nutrition"
-  description="Retrouvez tous nos guides, comparatifs, conseils et avis sur les compléments alimentaires : oméga 3, magnésium, vitamine D, collagène, whey et bien plus."
+  title="Guides compléments alimentaires et récupération sportive — Tous nos articles"
+  description={`${totalArticles} guides indépendants pour choisir les meilleurs compléments alimentaires et appareils de récupération sportive. Comparatifs, conseils et avis d'experts.`}
 >
-  <div class="articles-page">
-    <div class="container">
-      <div class="page-header">
-        <h1 class="page-header__title">Tous nos articles</h1>
-        <p class="page-header__desc">Comparatifs, conseils et avis rédigés par notre équipe d'experts en nutrition.</p>
+
+  <!-- ── HERO PAGE ───────────────────────────────────────────────── -->
+  <div class="al-hero">
+    <div class="al-hero__inner">
+      <p class="al-hero__eyebrow">{totalArticles} guides rédigés par nos experts</p>
+      <h1 class="al-hero__title">
+        Compléments & Récupération :<br/>
+        <span>tout ce que vous devez savoir.</span>
+      </h1>
+      <p class="al-hero__sub">
+        Comparatifs honnêtes, conseils fondés sur la science et avis détaillés pour faire les bons choix.
+      </p>
+
+      <!-- Filtres rapides -->
+      <div class="al-filters" id="al-filters">
+        <button class="al-chip al-chip--active" data-filter="all">Tous les articles</button>
+        <button class="al-chip" data-filter="complements">💊 Compléments</button>
+        <button class="al-chip" data-filter="recup">🏃 Récupération</button>
+        <button class="al-chip" data-filter="comparatif">Comparatifs</button>
+        <button class="al-chip" data-filter="conseil">Conseils</button>
       </div>
-
-      {parComplement.map(({ complement, articles: arts }) => (
-        <section class="articles-section">
-          <div class="articles-section__header">
-            <h2 class="articles-section__title">
-              <a href={`/complement/${complement.slug}`}>{complement.nom}</a>
-            </h2>
-            <a href={`/complement/${complement.slug}`} class="articles-section__more">Voir tous →</a>
-          </div>
-          <div class="grid-3">
-            {arts.map(article => (
-              <a href={`/articles/${article.slug}`} class="card">
-                <div class="card__body">
-                  <span class={`card__tag ${article.type === 'conseil' ? 'card__tag--blue' : ''}`}>
-                    {typeLabels[article.type] ?? article.type}
-                  </span>
-                  <div class="card__title">{article.titre}</div>
-                  <p class="card__excerpt">{article.extrait}</p>
-                  <div class="card__meta">
-                    <span>{article.duree}</span>
-                    <span>·</span>
-                    <time datetime={article.date}>{new Date(article.date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' })}</time>
-                  </div>
-                </div>
-              </a>
-            ))}
-          </div>
-        </section>
-      ))}
-
-      {articles.length === 0 && (
-        <div class="empty-state">
-          <p>Aucun article disponible pour l'instant. Revenez bientôt !</p>
-        </div>
-      )}
     </div>
   </div>
+
+  <!-- ── SECTION COMPLÉMENTS ────────────────────────────────────── -->
+  <div class="al-wrap" id="section-complements" data-section="complements">
+    <div class="al-section-header">
+      <div class="al-section-title-block">
+        <span class="al-section-icon">💊</span>
+        <div>
+          <h2 class="al-section-h2">Compléments alimentaires</h2>
+          <p class="al-section-desc">Oméga 3, magnésium, whey, créatine — ce qu'ils font vraiment et comment les choisir.</p>
+        </div>
+      </div>
+    </div>
+
+    {groupsComplements.map(group => (
+      <div class="al-group" data-group={group.slug}>
+        <div class="al-group__header">
+          <div class="al-group__title-row">
+            <h3 class="al-group__name">{group.nom}</h3>
+            <span class="al-group__count">{group.arts.length} article{group.arts.length > 1 ? 's' : ''}</span>
+          </div>
+          <a href={group.href} class="al-group__link">Guide complet →</a>
+        </div>
+
+        <div class="al-cards">
+          {group.arts.map((article, i) => (
+            <a
+              href={`/articles/${article.slug}`}
+              class={`al-card ${i === 0 ? 'al-card--lead' : ''}`}
+              data-type={article.type}
+              data-section="complements"
+            >
+              {i === 0 && (
+                <div class="al-card__img-wrap">
+                  <img
+                    src={heroImgs[group.slug] ?? heroImgs['multivitamines']}
+                    alt={article.titre}
+                    loading="lazy"
+                    width="480" height="220"
+                    class="al-card__img"
+                    style={`background:${catColors[group.slug] ?? '#F1F5F9'}`}
+                  />
+                  <span class={`al-card__badge al-card__badge--${article.type}`}>{typeLabels[article.type]}</span>
+                </div>
+              )}
+              <div class="al-card__body">
+                {i > 0 && <span class={`al-card__tag al-card__tag--${article.type}`}>{typeLabels[article.type]}</span>}
+                <p class="al-card__title">{article.titre}</p>
+                <p class="al-card__excerpt">{article.extrait}</p>
+                <div class="al-card__meta">
+                  <span class="al-card__time">⏱ {article.duree}</span>
+                  <span class="al-card__read">Lire →</span>
+                </div>
+              </div>
+            </a>
+          ))}
+        </div>
+      </div>
+    ))}
+  </div>
+
+  <!-- ── SECTION RÉCUPÉRATION ───────────────────────────────────── -->
+  <div class="al-wrap al-wrap--dark" id="section-recup" data-section="recup">
+    <div class="al-section-header">
+      <div class="al-section-title-block">
+        <span class="al-section-icon">🏃</span>
+        <div>
+          <h2 class="al-section-h2">Appareils de récupération</h2>
+          <p class="al-section-desc">Pistolets de massage, bottes de compression, bain froid — les outils des sportifs sérieux.</p>
+        </div>
+      </div>
+    </div>
+
+    {groupsRecup.map(group => (
+      <div class="al-group" data-group={group.slug}>
+        <div class="al-group__header">
+          <div class="al-group__title-row">
+            <h3 class="al-group__name">{group.nom}</h3>
+            <span class="al-group__count">{group.arts.length} article{group.arts.length > 1 ? 's' : ''}</span>
+          </div>
+        </div>
+
+        <div class="al-cards">
+          {group.arts.map((article, i) => (
+            <a
+              href={`/articles/${article.slug}`}
+              class={`al-card ${i === 0 ? 'al-card--lead' : ''}`}
+              data-type={article.type}
+              data-section="recup"
+            >
+              {i === 0 && (
+                <div class="al-card__img-wrap">
+                  <img
+                    src={heroImgs[group.slug] ?? heroImgs['pistolet-massage']}
+                    alt={article.titre}
+                    loading="lazy"
+                    width="480" height="220"
+                    class="al-card__img"
+                    style={`background:${catColors[group.slug] ?? '#EFF6FF'}`}
+                  />
+                  <span class={`al-card__badge al-card__badge--${article.type}`}>{typeLabels[article.type]}</span>
+                </div>
+              )}
+              <div class="al-card__body">
+                {i > 0 && <span class={`al-card__tag al-card__tag--${article.type}`}>{typeLabels[article.type]}</span>}
+                <p class="al-card__title">{article.titre}</p>
+                <p class="al-card__excerpt">{article.extrait}</p>
+                <div class="al-card__meta">
+                  <span class="al-card__time">⏱ {article.duree}</span>
+                  <span class="al-card__read">Lire →</span>
+                </div>
+              </div>
+            </a>
+          ))}
+        </div>
+      </div>
+    ))}
+  </div>
+
 </Layout>
 
 <style>
-.articles-page { padding: 40px 0 80px; }
-.page-header { margin-bottom: 48px; }
-.page-header__title { font-size: 40px; font-weight: 800; margin-bottom: 12px; }
-.page-header__desc { font-size: 18px; color: var(--color-text-light); }
+/* ── HERO ──────────────────────────────────────────────────────── */
+.al-hero {
+  background: linear-gradient(135deg, #0F172A 0%, #1E3A5F 60%, #1E40AF 100%);
+  padding: 64px 24px 52px;
+  text-align: center;
+}
+.al-hero__inner { max-width: 680px; margin: 0 auto; }
+.al-hero__eyebrow {
+  font-size: 13px;
+  font-weight: 600;
+  font-family: 'Montserrat', sans-serif;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #60A5FA;
+  margin-bottom: 16px;
+}
+.al-hero__title {
+  font-size: clamp(28px, 5vw, 42px);
+  font-weight: 800;
+  font-family: 'Montserrat', sans-serif;
+  color: #fff;
+  line-height: 1.2;
+  margin-bottom: 14px;
+  letter-spacing: -0.5px;
+}
+.al-hero__title span { color: #60A5FA; }
+.al-hero__sub {
+  font-size: 17px;
+  color: rgba(255,255,255,0.65);
+  margin-bottom: 36px;
+  line-height: 1.6;
+}
 
-.articles-section { margin-bottom: 56px; }
-.articles-section__header {
+/* Filtres chips */
+.al-filters {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+}
+.al-chip {
+  font-size: 13.5px;
+  font-weight: 600;
+  font-family: 'Montserrat', sans-serif;
+  padding: 8px 18px;
+  border-radius: 999px;
+  border: 1.5px solid rgba(255,255,255,0.2);
+  background: rgba(255,255,255,0.08);
+  color: rgba(255,255,255,0.7);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+.al-chip:hover { background: rgba(255,255,255,0.15); color: #fff; border-color: rgba(255,255,255,0.35); }
+.al-chip--active { background: #3B82F6; color: #fff; border-color: #3B82F6; }
+
+/* ── SECTIONS CONTENU ──────────────────────────────────────────── */
+.al-wrap {
+  max-width: 1060px;
+  margin: 0 auto;
+  padding: 48px 24px 24px;
+}
+.al-wrap--dark { padding-top: 40px; }
+
+/* En-tête de section */
+.al-section-header {
+  margin-bottom: 40px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid #E2E8F0;
+}
+.al-section-title-block {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.al-section-icon { font-size: 32px; flex-shrink: 0; }
+.al-section-h2 {
+  font-size: 26px;
+  font-weight: 800;
+  font-family: 'Montserrat', sans-serif;
+  color: #0F172A;
+  margin-bottom: 4px;
+  letter-spacing: -0.3px;
+}
+.al-section-desc {
+  font-size: 15px;
+  color: #64748B;
+}
+
+/* ── GROUPES (par complément / catégorie) ─────────────────────── */
+.al-group {
+  margin-bottom: 52px;
+}
+.al-group__header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 20px;
-  padding-bottom: 12px;
-  border-bottom: 2px solid var(--color-border);
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+  gap: 8px;
 }
-.articles-section__title {
-  font-size: 22px;
-  font-weight: 700;
+.al-group__title-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
-.articles-section__title a { color: var(--color-text); text-decoration: none; }
-.articles-section__title a:hover { color: var(--color-cta); }
-.articles-section__more { font-size: 14px; font-weight: 600; color: var(--color-accent); text-decoration: none; }
-.articles-section__more:hover { color: var(--color-cta); }
-
-.empty-state {
-  text-align: center;
-  padding: 64px 24px;
-  color: var(--color-text-light);
+.al-group__name {
   font-size: 18px;
+  font-weight: 700;
+  font-family: 'Montserrat', sans-serif;
+  color: #1E293B;
+}
+.al-group__count {
+  font-size: 12px;
+  font-weight: 600;
+  background: #EFF6FF;
+  color: #3B82F6;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-family: 'Montserrat', sans-serif;
+}
+.al-group__link {
+  font-size: 13px;
+  font-weight: 600;
+  color: #3B82F6;
+  text-decoration: none;
+  transition: color 0.15s;
+  font-family: 'Montserrat', sans-serif;
+}
+.al-group__link:hover { color: #2563EB; }
+
+/* ── GRILLE DE CARTES ─────────────────────────────────────────── */
+.al-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+/* Premier article = carte lead plus large */
+.al-cards > .al-card--lead {
+  grid-column: 1;
+}
+@media (min-width: 700px) {
+  .al-cards { grid-template-columns: 1fr 1fr; }
+  .al-cards > .al-card--lead { grid-column: 1 / -1; }
+  .al-cards > .al-card--lead .al-card__img-wrap { aspect-ratio: 16/7; }
+}
+@media (min-width: 900px) {
+  .al-cards { grid-template-columns: 1.6fr 1fr 1fr; }
+  .al-cards > .al-card--lead { grid-column: 1; grid-row: 1 / span 2; }
+  .al-cards > .al-card--lead .al-card__img-wrap { aspect-ratio: 4/3; }
+}
+
+/* ── CARTE ARTICLE ────────────────────────────────────────────── */
+.al-card {
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  border: 1px solid #E2E8F0;
+  border-radius: 14px;
+  overflow: hidden;
+  text-decoration: none;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+}
+.al-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 28px rgba(0,0,0,0.1);
+  border-color: #CBD5E1;
+}
+.al-card__img-wrap {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 16/9;
+  flex-shrink: 0;
+}
+.al-card__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.3s ease;
+}
+.al-card:hover .al-card__img { transform: scale(1.03); }
+
+/* Badge type flottant sur l'image */
+.al-card__badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  font-size: 11px;
+  font-weight: 700;
+  font-family: 'Montserrat', sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 4px 10px;
+  border-radius: 999px;
+  backdrop-filter: blur(8px);
+}
+.al-card__badge--comparatif { background: #3B82F6; color: #fff; }
+.al-card__badge--conseil    { background: #10B981; color: #fff; }
+.al-card__badge--test       { background: #F59E0B; color: #fff; }
+
+/* Corps de la carte */
+.al-card__body {
+  flex: 1;
+  padding: 18px 20px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Tag inline (pour cartes sans image) */
+.al-card__tag {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  font-family: 'Montserrat', sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 3px 9px;
+  border-radius: 999px;
+  align-self: flex-start;
+}
+.al-card__tag--comparatif { background: #EFF6FF; color: #2563EB; }
+.al-card__tag--conseil    { background: #F0FDF4; color: #16A34A; }
+.al-card__tag--test       { background: #FFFBEB; color: #B45309; }
+
+.al-card__title {
+  font-size: 15px;
+  font-weight: 700;
+  font-family: 'Montserrat', sans-serif;
+  color: #0F172A;
+  line-height: 1.4;
+  margin: 0;
+}
+.al-card--lead .al-card__title { font-size: 17px; }
+
+.al-card__excerpt {
+  font-size: 13.5px;
+  color: #64748B;
+  line-height: 1.55;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.al-card__meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: auto;
+  padding-top: 10px;
+  border-top: 1px solid #F1F5F9;
+}
+.al-card__time {
+  font-size: 12px;
+  color: #94A3B8;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 500;
+}
+.al-card__read {
+  font-size: 12px;
+  font-weight: 700;
+  font-family: 'Montserrat', sans-serif;
+  color: #3B82F6;
+  transition: color 0.15s;
+}
+.al-card:hover .al-card__read { color: #2563EB; }
+
+/* ── HIDDEN par filtre JS ─────────────────────────────────────── */
+.al-group--hidden { display: none; }
+.al-wrap--hidden  { display: none; }
+
+/* ── RESPONSIVE ───────────────────────────────────────────────── */
+@media (max-width: 600px) {
+  .al-hero { padding: 48px 20px 40px; }
+  .al-wrap { padding: 32px 16px 16px; }
+  .al-section-h2 { font-size: 20px; }
+  .al-cards { grid-template-columns: 1fr; }
+  .al-cards > .al-card--lead { grid-column: 1; grid-row: auto; }
 }
 </style>
+
+<script>
+// Filtres interactifs
+const chips = document.querySelectorAll<HTMLButtonElement>('.al-chip');
+const groups = document.querySelectorAll<HTMLElement>('.al-group');
+const sections = document.querySelectorAll<HTMLElement>('.al-wrap');
+const cards = document.querySelectorAll<HTMLElement>('.al-card');
+
+chips.forEach(chip => {
+  chip.addEventListener('click', () => {
+    chips.forEach(c => c.classList.remove('al-chip--active'));
+    chip.classList.add('al-chip--active');
+    const filter = chip.dataset.filter ?? 'all';
+
+    // Reset tout
+    sections.forEach(s => s.classList.remove('al-wrap--hidden'));
+    groups.forEach(g => g.classList.remove('al-group--hidden'));
+
+    if (filter === 'all') return;
+
+    if (filter === 'complements') {
+      sections.forEach(s => {
+        if (s.dataset.section === 'recup') s.classList.add('al-wrap--hidden');
+      });
+      return;
+    }
+    if (filter === 'recup') {
+      sections.forEach(s => {
+        if (!s.dataset.section || s.dataset.section === 'complements') s.classList.add('al-wrap--hidden');
+      });
+      return;
+    }
+
+    // Filtrage par type (comparatif / conseil)
+    groups.forEach(group => {
+      const matchingCards = group.querySelectorAll<HTMLElement>(`.al-card[data-type="${filter}"]`);
+      if (matchingCards.length === 0) group.classList.add('al-group--hidden');
+    });
+  });
+});
+</script>

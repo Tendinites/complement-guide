@@ -27,9 +27,9 @@ const GITHUB_REPO   = 'REPO_A_DEFINIR';    // à remplacer par le vrai repo
 const GITHUB_BRANCH = 'main';
 
 // Marque partenaire (backlinks discrets) — à configurer via env variable
-const PARTNER_BRAND = import.meta.env.PARTNER_BRAND ?? 'Golf Centre';
-const PARTNER_URL   = import.meta.env.PARTNER_URL   ?? 'https://golfcentre.fr';
-const PARTNER_DESC  = import.meta.env.PARTNER_DESC  ?? "spécialiste des compléments pour sportifs";
+const PARTNER_BRAND = import.meta.env.PARTNER_BRAND ?? 'JOLT Recovery';
+const PARTNER_URL   = import.meta.env.PARTNER_URL   ?? 'https://getjolt.fr';
+const PARTNER_DESC  = import.meta.env.PARTNER_DESC  ?? "spécialiste des appareils de récupération sportive";
 
 // Pool de sources nutrition — variété SEO inter-articles
 const NUTRITION_SOURCES_POOL = [
@@ -144,88 +144,158 @@ export const GET: APIRoute = async ({ request }) => {
 // ─────────────────────────────────────────────────────────────────────────────
 // GÉNÉRATION (Claude)
 // ─────────────────────────────────────────────────────────────────────────────
+
+// Compléments récupération sportive (seuls à pouvoir mentionner JOLT)
+const RECOVERY_COMPLEMENTS = new Set([
+  'pistolet-massage', 'bottes-compression', 'foam-roller',
+  'electrostimulation', 'cryotherapie', 'bain-froid',
+]);
+
 async function generateArticle(
   topic: typeof allTopics[number],
   finalSlug: string,
   dateISO: string,
 ) {
   const anthropic = new Anthropic({ apiKey: import.meta.env.ANTHROPIC_API_KEY });
-  const todaysSources = pickRandomSources(6);
-  const sourcesBlock = todaysSources
-    .map((s, i) => `   ${i + 1}. <a href="${s.url}" target="_blank" rel="noopener nofollow">${s.label}</a>`)
-    .join('\n');
+  const todaysSources = pickRandomSources(4);
 
-  const typeInstruction = topic.type === 'comparatif'
-    ? `C'est un article COMPARATIF : tu dois présenter et comparer les meilleures marques/formulations disponibles sur le marché français, avec un tableau comparatif.`
-    : topic.type === 'test'
-    ? `C'est un article TEST/AVIS : tu dois donner un avis circonstancié et honnête sur le produit ou la catégorie.`
-    : `C'est un article CONSEIL/GUIDE : tu dois expliquer, éduquer et conseiller le lecteur de manière pratique et actionnable.`;
+  const isRecovery = RECOVERY_COMPLEMENTS.has(topic.complement);
+  const isComparatif = topic.type === 'comparatif';
 
-  const prompt = `Tu es rédacteur expert en nutrition et compléments alimentaires pour un guide indépendant français, dans l'esprit d'EDP Nutrition ou d'un magazine santé sérieux. Ton ton est éditorial, objectif, basé sur les preuves.
+  // Bloc partenaire — uniquement pour les articles récupération
+  const partnerBlock = isRecovery
+    ? `MENTION PARTENAIRE (règle stricte) :
+- Insère EXACTEMENT 1 mention discrète et naturelle de "${PARTNER_BRAND}" (${PARTNER_DESC}) dans le corps du texte.
+- Format : un lien <a href="${PARTNER_URL}" target="_blank" rel="noopener sponsored">${PARTNER_BRAND}</a> intégré naturellement dans une phrase.
+- La mention doit paraître 100% éditoriale. Jamais dans la section produits.`
+    : `MENTION PARTENAIRE : aucune — cet article porte sur des compléments alimentaires, pas sur des équipements de récupération. N'insère aucun lien partenaire.`;
 
-SUJET DE L'ARTICLE : ${topic.titre}
+  // Template produits pour les comparatifs (même format que les articles manuels)
+  const productsTableTemplate = isComparatif ? `
+SECTION 2 — "2. Quels sont les meilleurs [X] en 2026 ?" — tableau produits OBLIGATOIRE :
+Utilise EXACTEMENT ce HTML (3 produits minimum) :
+
+<div style='overflow-x:auto;margin:1.5rem 0'>
+<table class='cg-products-table'>
+  <thead><tr><th>#</th><th>Produit</th><th>Note</th><th>Prix/mois</th><th>Points forts</th><th>Limite</th><th>Pour qui</th></tr></thead>
+  <tbody>
+    <tr class='cg-products-table__top'>
+      <td><span class='cg-num cg-num--1'>1</span></td>
+      <td><strong>Nom produit</strong><br/><span class='cg-tag'>Notre choix</span></td>
+      <td><span class='cg-stars'>★★★★★</span></td>
+      <td><strong>~XX€</strong></td>
+      <td>Point fort 1 · Point fort 2 · Point fort 3</td>
+      <td>Limite principale</td>
+      <td>Profil idéal</td>
+    </tr>
+    <tr>
+      <td><span class='cg-num cg-num--2'>2</span></td>
+      <td><strong>Nom produit 2</strong></td>
+      <td><span class='cg-stars'>★★★★<span class='cg-star-empty'>★</span></span></td>
+      <td>~XX€</td>
+      <td>Points forts</td>
+      <td>Limite</td>
+      <td>Pour qui</td>
+    </tr>
+    <tr>
+      <td><span class='cg-num cg-num--2'>3</span></td>
+      <td><strong>Nom produit 3</strong></td>
+      <td><span class='cg-stars'>★★★★<span class='cg-star-empty'>★</span></span></td>
+      <td>~XX€</td>
+      <td>Points forts</td>
+      <td>Limite</td>
+      <td>Pour qui</td>
+    </tr>
+  </tbody>
+</table>
+</div>` : `
+SECTION 2 — "2. [Question spécifique liée au sujet]" — PAS de tableau produits (article conseil).
+À la place : explication approfondie du mécanisme, données scientifiques, études citées.
+Un seul tableau si nécessaire pour comparer des données (ex: résultats d'études, valeurs normales).
+Inclure un lien interne vers l'article comparatif principal : <a href="/articles/${topic.complement}-comparatif">notre comparatif des meilleurs ${topic.complement.replace(/-/g, ' ')}</a> si pertinent.`;
+
+  const prompt = `Tu es rédacteur expert en nutrition et compléments alimentaires pour Complément Guide, un blog éditorial indépendant français. Ton ton est pédagogique, honnête, basé sur la science — jamais de survente.
+
+SUJET : ${topic.titre}
+INTENTION DE RECHERCHE : Le lecteur a tapé "${topic.intentionRecherche}" sur Google. Ton article doit être LA meilleure réponse à cette question.
 COMPLÉMENT : ${topic.complement}
-TYPE : ${typeInstruction}
-${topic.objectif ? `OBJECTIF SANTÉ CIBLÉ : ${topic.objectif}` : ''}
+TYPE : ${topic.type === 'comparatif' ? 'COMPARATIF' : 'CONSEIL / GUIDE PRATIQUE'}
+${topic.objectif ? `OBJECTIF SANTÉ : ${topic.objectif}` : ''}
 
-RÈGLES ÉDITORIALES :
-- Public : adulte francophone qui cherche à se renseigner sérieusement sur les compléments alimentaires.
-- Ton : pédagogique, honnête, basé sur la science. Jamais de survente ni d'alarmisme.
-- Longueur : 1400 à 1900 mots.
-- Cite au moins 3 sources dans le corps du texte ("selon l'ANSES", "une méta-analyse publiée dans...", "l'EFSA considère que...").
-- Conseille toujours de consulter un médecin avant toute supplémentation longue.
+════════════════════════════════════════
+STRUCTURE OBLIGATOIRE (respecte l'ordre exact)
+════════════════════════════════════════
 
-STRUCTURE HTML OBLIGATOIRE :
-1. Réponse directe : <p class="answer-direct"><strong>En résumé :</strong> réponse concise.</p> — OBLIGATOIRE, en tout premier.
-2. Accroche : <p class="lead">...</p> — pose le problème, donne envie de lire.
-3. 4 à 6 sections <h2> dont au moins 2 formulées en QUESTION directe (ex: "Quelle dose prendre ?", "Quels sont les effets secondaires ?").
-4. Sous-sections <h3> pertinentes.
-5. Définitions précises : introduire les termes clés par "X est..." ou "On appelle X...".
-6. Tableaux <table> HTML si comparaison de formes, marques, dosages.
-
-ÉLÉMENTS VISUELS (obligatoires) :
-a) Encadré "À retenir" (au moins 2) :
-<aside class="callout callout-retenir"><p class="callout-title">À retenir</p><p>...</p></aside>
-
-b) Encadré "Conseil pratique" (au moins 1) :
-<aside class="callout callout-conseil"><p class="callout-title">Conseil pratique</p><p>...</p></aside>
-
-c) Encadré "Attention" si pertinent (effets secondaires, interactions) :
-<aside class="callout callout-alerte"><p class="callout-title">Attention</p><p>...</p></aside>
-
-d) Liste numérotée "étapes" pour les protocoles :
-<ol class="steps"><li><strong>Étape 1</strong> — ...</li></ol>
-
-e) FAQ collapse (4 à 5 questions) en fin d'article :
-<h2>Questions fréquentes</h2>
-<div class="faq">
-<details><summary>Question ?</summary><p>Réponse.</p></details>
+1. VERDICT RAPIDE — en tout premier, avant tout autre contenu :
+<div class='verdict-rapide'>
+  <div class='verdict-rapide__header'>
+    <span class='verdict-rapide__icon'>✓</span>
+    <span class='verdict-rapide__label'>[Thème] : notre verdict</span>
+  </div>
+  <p class='verdict-rapide__top'>Réponse directe en 1 phrase (ex: "Notre choix : <strong>Produit X</strong> — ★★★★★ — ~XX€/mois")</p>
+  <p class='verdict-rapide__text'>2-3 phrases : la réponse essentielle, les chiffres clés, ce qu'il faut retenir. Concis et actionnable.</p>
 </div>
 
-MENTION PARTENAIRE (règle stricte) :
-- Insère EXACTEMENT 1 mention discrète et naturelle de la marque partenaire "${PARTNER_BRAND}" (${PARTNER_DESC}) dans le corps de l'article, dans un contexte pertinent.
-- Format : "... <a href="${PARTNER_URL}" target="_blank" rel="noopener sponsored">${PARTNER_BRAND}</a> propose par exemple des formulations de qualité dans cette catégorie."
-- La mention doit paraître 100% éditoriale, pas publicitaire.
-- NE JAMAIS citer de marques concurrentes françaises ou internationales (iHerb, Amazon, Nutrimuscle, Myprotein, etc.).
+2. H2 "1. Qu'est-ce que [X] ?" — définition + image + 1 seul tableau
+- Image : <figure style='margin:1.5rem 0;border-radius:12px;overflow:hidden'><img src='URL_UNSPLASH_OU_PEXELS' alt='description' style='width:100%;display:block' loading='lazy'/></figure>
+- Paragraphes d'introduction (contexte, chiffres épidémio, pourquoi c'est important)
+- Callout retenir : <div class='callout-retenir'><strong>À retenir</strong> — ...</div>
+- 1 tableau HTML (inline styles, pas de classes CSS custom) qui répond à UNE SEULE question :
+  "Quelles sont les formes/variantes/mécanismes ?" OU "Quels sont les signes/niveaux ?" — JAMAIS les dosages ici
+  Style du tableau : <table style='width:100%;border-collapse:collapse;font-size:.88rem'>
+  Header : <thead><tr style='background:#1E293B;color:#fff'>
+  Lignes alternées : alternez style='background:#F8FAFC' et rien
 
-SOURCES — section obligatoire juste avant la FAQ :
+${productsTableTemplate}
+
+3. H2 "3. Comment utiliser [X] ?" — pratique + 1 seul tableau dosage/timing
+- Image différente de la section 1
+- 1 tableau qui répond UNIQUEMENT à "Quelle dose / quel timing / quelle durée ?"
+  Colonnes possibles : Objectif | Dose | Quand prendre | Durée — PAS de colonne "Forme" (déjà dans S1)
+- Callout conseil : <div class='callout-conseil'><strong>💡 Conseils pratiques</strong> — ...</div>
+
+4. FAQ — 3 à 4 questions/réponses ciblées sur l'intention de recherche :
+<h2>FAQ</h2>
+<details><summary>Question ?</summary><p>Réponse complète.</p></details>
+
+════════════════════════════════════════
+RÈGLES TABLEAUX (CRITIQUE)
+════════════════════════════════════════
+- MAXIMUM 3 tableaux dans tout l'article (S1 + produits + S3)
+- Chaque tableau répond à UNE seule question distincte
+- Aucune colonne ne doit apparaître dans 2 tableaux différents
+- Pas de tableau dans la FAQ ni dans le verdict
+
+════════════════════════════════════════
+RÈGLES ÉDITORIALES
+════════════════════════════════════════
+- Cite au moins 2 études ou sources ("selon l'ANSES", "une méta-analyse de 2023 publiée dans Nutrients montre...", "l'EFSA fixe...")
+- Longueur : 1 200 à 1 800 mots
+- Jamais de code promo, jamais de lien mort (href="#"), jamais de CTA vers des URLs inexistantes
+- Liens internes uniquement vers /articles/ ou /complement/ — pas de liens externes sauf sources
+- Ton affirmatif : "Le bisglycinate est la forme la mieux absorbée" pas "pourrait être"
+
+${partnerBlock}
+
+SOURCES — juste avant la FAQ :
 <h2>Sources</h2>
-<ul class="sources">
+<ul class='sources'>
 ${todaysSources.map(s => `<li><a href="${s.url}" target="_blank" rel="noopener nofollow">${s.label}</a></li>`).join('\n')}
 </ul>
 
-RÉPONSE : uniquement un objet JSON valide (pas de markdown, pas de backticks) :
+════════════════════════════════════════
+RÉPONSE : uniquement JSON valide, pas de markdown, pas de backticks
+════════════════════════════════════════
 {
-  "slug": "${finalSlug}",
-  "titre": "string (60-80 caractères, accrocheur)",
-  "extrait": "string (150-200 caractères, meta description)",
-  "duree": "string (ex: '7 min')",
-  "contenu_html": "string HTML complet"
+  "titre": "string (55-75 caractères, reprend le mot-clé exact de l'intention)",
+  "extrait": "string (150-170 caractères, meta description qui répond directement à la question)",
+  "duree": "string (ex: '6 min')",
+  "contenu_html": "string HTML complet — les guillemets internes doivent être échappés"
 }`;
 
   const response = await anthropic.messages.create({
     model: 'claude-sonnet-4-6',
-    max_tokens: 8000,
+    max_tokens: 10000,
     messages: [{ role: 'user', content: prompt }],
   });
 
@@ -236,9 +306,9 @@ RÉPONSE : uniquement un objet JSON valide (pas de markdown, pas de backticks) :
   try {
     parsed = JSON.parse(textBlock.text);
   } catch {
-    const match = textBlock.text.match(/```(?:json)?\s*([\s\S]+?)\s*```/);
+    const match = textBlock.text.match(/```(?:json)?\s*([\s\S]+?)\s*```/s);
     if (match) parsed = JSON.parse(match[1]);
-    else throw new Error(`JSON invalide : ${textBlock.text.slice(0, 200)}`);
+    else throw new Error(`JSON invalide : ${textBlock.text.slice(0, 300)}`);
   }
 
   return {
@@ -246,14 +316,16 @@ RÉPONSE : uniquement un objet JSON valide (pas de markdown, pas de backticks) :
     titre: parsed.titre,
     extrait: parsed.extrait,
     complement: topic.complement,
-    objectif: topic.objectif,
+    objectif: topic.objectif ?? '',
     type: topic.type,
     duree: parsed.duree,
     date: dateISO,
+    updated: dateISO,
     contenu_html: parsed.contenu_html,
-    marque_produit: PARTNER_BRAND,
-    marque_lien: PARTNER_URL,
-    marque_description: PARTNER_DESC,
+    // JOLT uniquement pour les équipements de récupération
+    marque_produit: isRecovery ? PARTNER_BRAND : '',
+    marque_lien:    isRecovery ? PARTNER_URL   : '',
+    marque_description: isRecovery ? PARTNER_DESC : '',
   };
 }
 

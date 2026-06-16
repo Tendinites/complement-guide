@@ -1,34 +1,145 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import { articles } from '../data/articles';
+import { articles, complements, appareilsRecup } from '../data/articles';
 
 const comparatifs = articles.filter(a => a.type === 'comparatif');
+
+const heroImgs: Record<string, string> = {
+  'omega-3':          'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?w=480&h=260&fit=crop&auto=format',
+  'magnesium':        'https://images.unsplash.com/photo-1628771065518-0d82f1938462?w=480&h=260&fit=crop&auto=format',
+  'vitamine-d':       'https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=480&h=260&fit=crop&auto=format',
+  'collagene':        'https://images.unsplash.com/photo-1515377905703-c4788e51af15?w=480&h=260&fit=crop&auto=format',
+  'whey':             'https://images.unsplash.com/photo-1593095948071-474c5cc2989d?w=480&h=260&fit=crop&auto=format',
+  'creatine':         'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=480&h=260&fit=crop&auto=format',
+  'probiotiques':     'https://images.unsplash.com/photo-1574316071802-0d684efa7bf5?w=480&h=260&fit=crop&auto=format',
+  'multivitamines':   'https://images.unsplash.com/photo-1512069772995-ec65ed45afd6?w=480&h=260&fit=crop&auto=format',
+  'ashwagandha':      'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=480&h=260&fit=crop&auto=format',
+  'zinc':             'https://images.unsplash.com/photo-1587854692152-cbe660dbde88?w=480&h=260&fit=crop&auto=format',
+  'fer':              'https://images.unsplash.com/photo-1558030006-450675393462?w=480&h=260&fit=crop&auto=format',
+  'pistolet-massage':   'https://plus.unsplash.com/premium_photo-1682092304863-28846294f68c?w=480&h=260&fit=crop&auto=format',
+  'bottes-compression': 'https://images.pexels.com/photos/20860588/pexels-photo-20860588.jpeg?auto=compress&cs=tinysrgb&w=480&h=260&fit=crop',
+  'cryotherapie':       'https://images.pexels.com/photos/7041577/pexels-photo-7041577.jpeg?auto=compress&cs=tinysrgb&w=480&h=260&fit=crop',
+  'foam-roller':        'https://plus.unsplash.com/premium_photo-1661923103649-0223557b8589?w=480&h=260&fit=crop&auto=format',
+  'electrostimulation': 'https://images.pexels.com/photos/7108341/pexels-photo-7108341.jpeg?auto=compress&cs=tinysrgb&w=480&h=260&fit=crop',
+  'bain-froid':         'https://images.pexels.com/photos/14815623/pexels-photo-14815623.jpeg?auto=compress&cs=tinysrgb&w=480&h=260&fit=crop',
+};
+
+const complementLabels: Record<string, string> = Object.fromEntries(
+  [...complements.map(c => [c.slug, c.nom]),
+   ...appareilsRecup.map(r => [r.slug, r.nom])]
+);
 ---
 
 <Layout
-  title="Comparatifs de compléments alimentaires — EDP Nutrition"
-  description="Nos comparatifs indépendants des meilleurs compléments alimentaires : oméga 3, magnésium, vitamine D, whey, créatine et plus. Testés et approuvés par nos experts."
+  title="Comparatifs compléments alimentaires & récupération 2026 — Complément Guide"
+  description="Nos comparatifs indépendants : meilleur oméga 3, magnésium, whey, créatine, pistolet de massage… Classements testés et mis à jour par nos experts."
 >
-  <div class="page container" style="padding:40px 0 80px">
-    <h1 style="font-size:40px;font-weight:800;margin-bottom:12px">Comparatifs</h1>
-    <p style="font-size:18px;color:var(--color-text-light);margin-bottom:40px">Nos sélections des meilleurs compléments par catégorie, mises à jour régulièrement.</p>
-    {comparatifs.length > 0 ? (
-      <div class="grid-3">
-        {comparatifs.map(a => (
-          <a href={`/articles/${a.slug}`} class="card">
-            <div class="card__body">
-              <span class="card__tag">Comparatif</span>
-              <div class="card__title">{a.titre}</div>
-              <p class="card__excerpt">{a.extrait}</p>
-              <div class="card__meta">
-                <span>{a.complement}</span><span>·</span><span>{a.duree}</span>
-              </div>
-            </div>
-          </a>
-        ))}
-      </div>
-    ) : (
-      <p style="color:var(--color-text-light);text-align:center;padding:64px">Nos comparatifs arrivent bientôt. Revenez dans quelques jours !</p>
-    )}
+
+  <!-- Hero -->
+  <div class="pg-hero">
+    <div class="pg-hero__inner">
+      <p class="pg-hero__eyebrow">{comparatifs.length} comparatifs rédigés par nos experts</p>
+      <h1 class="pg-hero__title">Nos <span>comparatifs</span> indépendants</h1>
+      <p class="pg-hero__sub">Chaque produit testé, chaque marque analysée. Des classements honnêtes pour faire le bon choix.</p>
+    </div>
   </div>
+
+  <!-- Grille articles -->
+  <div class="pg-wrap">
+    <div class="pg-cards">
+      {comparatifs.map(article => (
+        <a href={`/articles/${article.slug}`} class="pg-card">
+          <div class="pg-card__img-wrap">
+            <img
+              src={heroImgs[article.complement] ?? heroImgs['multivitamines']}
+              alt={article.titre}
+              loading="lazy"
+              width="480" height="220"
+              class="pg-card__img"
+            />
+            <span class="pg-card__badge">Comparatif</span>
+          </div>
+          <div class="pg-card__body">
+            <span class="pg-card__cat">{complementLabels[article.complement] ?? article.complement}</span>
+            <p class="pg-card__title">{article.titre}</p>
+            <p class="pg-card__excerpt">{article.extrait}</p>
+            <div class="pg-card__meta">
+              <span>⏱ {article.duree}</span>
+              <span class="pg-card__read">Lire →</span>
+            </div>
+          </div>
+        </a>
+      ))}
+    </div>
+  </div>
+
 </Layout>
+
+<style>
+.pg-hero {
+  background: linear-gradient(135deg, #0F172A 0%, #1E3A5F 60%, #1E40AF 100%);
+  padding: 60px 24px 48px;
+  text-align: center;
+}
+.pg-hero__inner { max-width: 620px; margin: 0 auto; }
+.pg-hero__eyebrow {
+  font-size: 12px; font-weight: 700; font-family: 'Montserrat', sans-serif;
+  text-transform: uppercase; letter-spacing: .1em; color: #60A5FA; margin-bottom: 14px;
+}
+.pg-hero__title {
+  font-size: clamp(28px,5vw,40px); font-weight: 800;
+  font-family: 'Montserrat', sans-serif; color: #fff;
+  line-height: 1.2; margin-bottom: 12px; letter-spacing: -.5px;
+}
+.pg-hero__title span { color: #60A5FA; }
+.pg-hero__sub { font-size: 16px; color: rgba(255,255,255,.65); line-height: 1.6; }
+
+.pg-wrap { max-width: 1060px; margin: 0 auto; padding: 48px 24px 80px; }
+
+.pg-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+@media (min-width: 700px) { .pg-cards { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 1000px) { .pg-cards { grid-template-columns: repeat(3, 1fr); } }
+
+.pg-card {
+  display: flex; flex-direction: column;
+  background: #fff; border: 1px solid #E2E8F0; border-radius: 14px;
+  overflow: hidden; text-decoration: none;
+  transition: transform .18s ease, box-shadow .18s ease, border-color .18s;
+}
+.pg-card:hover { transform: translateY(-3px); box-shadow: 0 8px 28px rgba(0,0,0,.09); border-color: #CBD5E1; }
+
+.pg-card__img-wrap { position: relative; overflow: hidden; aspect-ratio: 16/9; flex-shrink: 0; }
+.pg-card__img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .3s; }
+.pg-card:hover .pg-card__img { transform: scale(1.03); }
+.pg-card__badge {
+  position: absolute; top: 12px; left: 12px;
+  background: #3B82F6; color: #fff;
+  font-size: 11px; font-weight: 700; font-family: 'Montserrat', sans-serif;
+  text-transform: uppercase; letter-spacing: .05em; padding: 4px 10px; border-radius: 999px;
+}
+
+.pg-card__body { flex: 1; padding: 16px 18px 20px; display: flex; flex-direction: column; gap: 7px; }
+.pg-card__cat {
+  font-size: 11px; font-weight: 700; font-family: 'Montserrat', sans-serif;
+  color: #3B82F6; text-transform: uppercase; letter-spacing: .05em;
+}
+.pg-card__title {
+  font-size: 15px; font-weight: 700; font-family: 'Montserrat', sans-serif;
+  color: #0F172A; line-height: 1.4; margin: 0;
+}
+.pg-card__excerpt {
+  font-size: 13px; color: #64748B; line-height: 1.55; margin: 0;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+.pg-card__meta {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-top: auto; padding-top: 10px; border-top: 1px solid #F1F5F9;
+  font-size: 12px; color: #94A3B8; font-family: 'Montserrat', sans-serif;
+}
+.pg-card__read { font-weight: 700; color: #3B82F6; }
+.pg-card:hover .pg-card__read { color: #2563EB; }
+</style>

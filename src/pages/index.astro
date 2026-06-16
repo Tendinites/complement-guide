@@ -2,8 +2,9 @@
 import Layout from '../layouts/Layout.astro';
 import { articles, complements, objectifs } from '../data/articles';
 
-const recentArticles = articles.slice(0, 6);
-const comparatifs = articles.filter(a => a.type === 'comparatif').slice(0, 4);
+const recentArticles = articles.slice(0, 8);
+const comparatifs = articles.filter(a => a.type === 'comparatif').slice(0, 6);
+const conseils = articles.filter(a => a.type === 'conseil').slice(0, 6);
 
 const typeLabels: Record<string, string> = {
   comparatif: 'Comparatif',
@@ -11,279 +12,699 @@ const typeLabels: Record<string, string> = {
   test: 'Test & Avis',
   'code-promo': 'Code Promo',
 };
+
+// Photos Unsplash pour objectifs (lifestyle)
+const objPhotos: Record<string, string> = {
+  'Perte de poids':       'https://images.pexels.com/photos/3757954/pexels-photo-3757954.jpeg?auto=compress&cs=tinysrgb&w=300&h=300&fit=crop',
+  'Bien vieillir':        'https://images.pexels.com/photos/3831645/pexels-photo-3831645.jpeg?auto=compress&cs=tinysrgb&w=300&h=300&fit=crop',
+  'Digestion':            'https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&w=300&h=300&fit=crop',
+  'Stress':               'https://images.pexels.com/photos/3094215/pexels-photo-3094215.jpeg?auto=compress&cs=tinysrgb&w=300&h=300&fit=crop',
+  'Nutrition sportive':   'https://images.pexels.com/photos/1552252/pexels-photo-1552252.jpeg?auto=compress&cs=tinysrgb&w=300&h=300&fit=crop',
+  'Récupération sportive':'https://images.pexels.com/photos/3757952/pexels-photo-3757952.jpeg?auto=compress&cs=tinysrgb&w=300&h=300&fit=crop',
+  'Santé féminine':       'https://images.unsplash.com/photo-1518611012118-696072aa579a?w=300&h=300&fit=crop',
+};
+
+// Photos Unsplash pour compléments (produits)
+const compPhotos: Record<string, string> = {
+  'omega-3':        'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?w=280&h=280&fit=crop',
+  'magnesium':      'https://images.unsplash.com/photo-1628771065518-0d82f1938462?w=280&h=280&fit=crop',
+  'vitamine-d':     'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=280&h=280&fit=crop',
+  'collagene':      'https://images.unsplash.com/photo-1515377905703-c4788e51af15?w=280&h=280&fit=crop',
+  'whey':           'https://images.unsplash.com/photo-1593095948071-474c5cc2989d?w=280&h=280&fit=crop',
+  'creatine':       'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=280&h=280&fit=crop',
+  'probiotiques':   'https://images.unsplash.com/photo-1574316071802-0d684efa7bf5?w=280&h=280&fit=crop',
+  'multivitamines': 'https://images.unsplash.com/photo-1512069772995-ec65ed45afd6?w=280&h=280&fit=crop',
+  'ashwagandha':    'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=280&h=280&fit=crop',
+  'zinc':           'https://images.unsplash.com/photo-1587854692152-cbe660dbde88?w=280&h=280&fit=crop',
+  'fer':            'https://images.unsplash.com/photo-1558030006-450675393462?w=280&h=280&fit=crop',
+};
+
+// Photo pour articles (par complément)
+const articlePhoto = (slug: string, type: string) => {
+  const base = compPhotos[slug] || 'https://images.unsplash.com/photo-1512069772995-ec65ed45afd6?w=640&h=400&fit=crop';
+  return base.replace('w=280&h=280', 'w=640&h=400');
+};
 ---
 
 <Layout
-  title="EDP Nutrition — Expert français en compléments alimentaires"
+  title="Complément Guide — Expert français en compléments alimentaires"
   description="Guide indépendant sur les compléments alimentaires : comparatifs, conseils, avis produits. Rédigé par des experts en nutrition pour vous aider à choisir les meilleurs compléments."
 >
 
-  <!-- ── Hero ────────────────────────────────────────────────── -->
-  <section class="hero">
-    <div class="container">
-      <div class="hero__inner">
-        <div class="hero__badge">Expert Français N°1 sur les compléments alimentaires</div>
-        <h1 class="hero__title">Découvrez les compléments alimentaires adaptés à tous vos besoins</h1>
-        <p class="hero__subtitle">Comparatifs indépendants, conseils d'experts et avis produits pour vous aider à choisir sans vous tromper.</p>
-        <div class="hero__actions">
-          <a href="/comparatifs" class="btn btn--primary">Voir nos comparatifs</a>
-          <a href="/conseils" class="btn btn--outline">Conseils experts</a>
+  <!-- ═══════════════════════════════════════════════════════════
+       HERO — dark gradient EDP
+       ══════════════════════════════════════════════════════════ -->
+  <section class="edp-hero">
+    <div class="edp-hero-inner">
+      <h1>Le guide indépendant des<br/><span>compléments alimentaires</span></h1>
+      <p class="edp-hero-sub">
+        Comparatifs honnêtes, conseils d'experts et avis produits.<br/>
+        <u>Tout ce qu'il faut savoir pour bien choisir, sans se tromper.</u>
+      </p>
+
+      <div class="edp-search-wrap">
+        <div class="edp-search-bar">
+          <input
+            type="text"
+            id="hero-search"
+            placeholder="Rechercher un complément, un objectif…"
+            autocomplete="off"
+            aria-label="Rechercher"
+          />
+          <button type="button" onclick="handleSearch()">Rechercher</button>
         </div>
+        <div class="edp-search-dropdown" id="search-dropdown"></div>
       </div>
+
+      <p class="edp-search-examples">Ex : oméga 3, magnésium, sommeil, sport, immunité…</p>
     </div>
   </section>
 
-  <!-- ── Explorer par objectif ──────────────────────────────── -->
-  <section class="section">
-    <div class="container">
-      <h2 class="section-title">Explorer par objectif</h2>
-      <p class="section-subtitle">Trouvez les compléments adaptés à votre situation et vos objectifs de santé.</p>
-      <div class="objectifs-grid">
+  <!-- ═══════════════════════════════════════════════════════════
+       OBJECTIFS — scroll horizontal, cartes photos
+       ══════════════════════════════════════════════════════════ -->
+  <section class="edp-objectives">
+    <div class="edp-objectives-container">
+      <div class="edp-obj-title">LES COMPLÉMENTS SELON VOS OBJECTIFS</div>
+      <div class="edp-objectives-scroll" id="obj-scroll">
         {objectifs.map(obj => (
-          <a href={`/objectif/${obj.slug}`} class="objectif-card">
-            <span class="objectif-card__icon">{obj.icon}</span>
-            <span class="objectif-card__label">{obj.nom}</span>
+          <a href={`/articles?objectif=${obj.slug}`} class="edp-obj-item">
+            <div class="edp-obj-img">
+              <img
+                src={objPhotos[obj.nom] ?? `https://images.unsplash.com/photo-1512069772995-ec65ed45afd6?w=300&h=300&fit=crop`}
+                alt={obj.nom}
+                loading="lazy"
+                width="150"
+                height="150"
+              />
+            </div>
+            <span class="edp-obj-label">{obj.nom}</span>
           </a>
         ))}
       </div>
     </div>
   </section>
 
-  <!-- ── Comparatifs populaires ─────────────────────────────── -->
+  <!-- ═══════════════════════════════════════════════════════════
+       TOP 10 COMPARATIFS — cartes visuelles + CTA
+       ══════════════════════════════════════════════════════════ -->
+  <div class="edp-section edp-top10-section">
+    <div class="edp-section-header">
+      <div class="edp-section-title">NOS TOP 10 COMPARATIFS</div>
+      <a href="/comparatifs" class="btn btn--outline">Tous les comparatifs →</a>
+    </div>
+    <hr class="edp-section-sep" />
+
+    <div class="edp-top10-category-label">💊 Compléments alimentaires</div>
+    <div class="edp-top10-grid">
+      {[
+        { slug: 'complement/whey',           nom: 'Top 10 Whey Protéine',       desc: 'Les meilleures poudres de protéines testées', emoji: '💪', color: '#EFF6FF', border: '#BFDBFE' },
+        { slug: 'complement/collagene',      nom: 'Top 10 Collagène',           desc: 'Collagène marin vs bovin : notre classement', emoji: '✨', color: '#FDF4FF', border: '#E9D5FF' },
+        { slug: 'complement/omega-3',        nom: 'Top 10 Oméga 3',             desc: 'EPA/DHA : les capsules les plus biodisponibles', emoji: '🐟', color: '#ECFDF5', border: '#A7F3D0' },
+        { slug: 'complement/magnesium',      nom: 'Top 10 Magnésium',           desc: 'Bisglycinate, malate : quelle forme choisir ?', emoji: '⚡', color: '#FFFBEB', border: '#FCD34D' },
+        { slug: 'complement/vitamine-d',     nom: 'Top 10 Vitamine D',          desc: 'D3 + K2 : les associations les plus efficaces', emoji: '☀️', color: '#FFF7ED', border: '#FED7AA' },
+        { slug: 'complement/probiotiques',   nom: 'Top 10 Probiotiques',        desc: 'Flore intestinale : les souches qui fonctionnent', emoji: '🦠', color: '#F0FDF4', border: '#BBF7D0' },
+      ].map(item => (
+        <a href={`/${item.slug}`} class="edp-top10-card" style={`--card-bg:${item.color};--card-border:${item.border}`}>
+          <div class="edp-top10-emoji">{item.emoji}</div>
+          <div class="edp-top10-body">
+            <div class="edp-top10-name">{item.nom}</div>
+            <div class="edp-top10-desc">{item.desc}</div>
+          </div>
+          <span class="edp-top10-arrow">›</span>
+        </a>
+      ))}
+    </div>
+
+    <div class="edp-top10-category-label" style="margin-top:2rem">🏃 Appareils de récupération</div>
+    <div class="edp-top10-grid">
+      {[
+        { slug: 'articles/pistolet-massage',    nom: 'Top 10 Pistolets massage',    desc: 'Les meilleures percussions musculaires testées', emoji: '🔫', color: '#EFF6FF', border: '#BFDBFE' },
+        { slug: 'articles/bottes-compression',  nom: 'Top 10 Bottes compression',   desc: 'Récupération jambes : les meilleurs modèles', emoji: '🥾', color: '#FDF4FF', border: '#E9D5FF' },
+        { slug: 'articles/cryotherapie',        nom: 'Top 10 Cryothérapie',         desc: 'Bain froid, cryo locale : notre classement', emoji: '🧊', color: '#ECFDF5', border: '#A7F3D0' },
+        { slug: 'articles/foam-roller',         nom: 'Top 10 Foam Rollers',         desc: 'Lisses, vibrants, picots : quelle forme choisir ?', emoji: '🪵', color: '#FFFBEB', border: '#FCD34D' },
+        { slug: 'articles/electrostimulation',  nom: 'Top 10 Électrostimulation',   desc: 'EMS & TENS : les appareils qui fonctionnent', emoji: '⚡', color: '#FFF7ED', border: '#FED7AA' },
+        { slug: 'articles/bain-froid',          nom: 'Top 10 Bains froids',         desc: 'Tonneaux, baignoires, plonges : notre comparatif', emoji: '🛁', color: '#F0FDF4', border: '#BBF7D0' },
+      ].map(item => (
+        <a href={`/${item.slug}`} class="edp-top10-card" style={`--card-bg:${item.color};--card-border:${item.border}`}>
+          <div class="edp-top10-emoji">{item.emoji}</div>
+          <div class="edp-top10-body">
+            <div class="edp-top10-name">{item.nom}</div>
+            <div class="edp-top10-desc">{item.desc}</div>
+          </div>
+          <span class="edp-top10-arrow">›</span>
+        </a>
+      ))}
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       COMPARATIFS (articles) — grille 3 colonnes
+       ══════════════════════════════════════════════════════════ -->
   {comparatifs.length > 0 && (
-    <section class="section section--gray">
-      <div class="container">
-        <div class="section-header">
-          <div>
-            <h2 class="section-title">Nos comparatifs populaires</h2>
-            <p class="section-subtitle">Nos sélections des meilleurs compléments par catégorie, mises à jour régulièrement.</p>
-          </div>
-          <a href="/comparatifs" class="btn btn--outline">Tous les comparatifs</a>
+    <div class="edp-section" style="background:#fff; padding: 44px 0;">
+      <div style="max-width:1060px; margin:0 auto; padding:0 24px;">
+        <div class="edp-section-header">
+          <div class="edp-section-title">NOS COMPARATIFS LES PLUS LUS</div>
+          <a href="/comparatifs" class="btn btn--outline">Voir tout →</a>
         </div>
-        <div class="grid-2">
-          {comparatifs.map(article => (
-            <a href={`/articles/${article.slug}`} class="card card--horiz">
-              <div class="card__body">
-                <span class="card__tag">{typeLabels[article.type] ?? article.type}</span>
-                <div class="card__title">{article.titre}</div>
-                <p class="card__excerpt">{article.extrait}</p>
-                <div class="card__meta">
-                  <span>{article.complement}</span>
-                  <span>·</span>
-                  <span>{article.duree}</span>
-                </div>
+        <hr class="edp-section-sep" />
+        <div class="edp-compa-grid">
+          {comparatifs.map((article) => (
+            <a href={`/articles/${article.slug}`} class="edp-compa-card">
+              <div class="edp-compa-dot"></div>
+              <div class="edp-compa-info">
+                <h3>{article.titre}</h3>
+                <p>{article.complement} · {article.duree}</p>
               </div>
+              <span class="edp-compa-arrow">›</span>
             </a>
           ))}
         </div>
-      </div>
-    </section>
-  )}
-
-  <!-- ── Répertoire compléments ─────────────────────────────── -->
-  <section class="section">
-    <div class="container">
-      <h2 class="section-title">Notre répertoire de compléments</h2>
-      <p class="section-subtitle">Guides complets par type de complément — bienfaits, dosage, formes et meilleures marques.</p>
-      <div class="complements-grid">
-        {complements.map(c => (
-          <a href={`/complement/${c.slug}`} class="complement-card">
-            <div class="complement-card__name">{c.nom}</div>
-            <p class="complement-card__desc">{c.description}</p>
-            <span class="complement-card__cta">Voir le guide →</span>
-          </a>
-        ))}
       </div>
     </div>
-  </section>
+  )}
 
-  <!-- ── Derniers articles ──────────────────────────────────── -->
-  {recentArticles.length > 0 && (
-    <section class="section section--gray">
-      <div class="container">
-        <div class="section-header">
-          <div>
-            <h2 class="section-title">Derniers articles</h2>
-            <p class="section-subtitle">Conseils, guides et avis publiés récemment par notre équipe.</p>
+  <!-- ═══════════════════════════════════════════════════════════
+       ARTICLES CONSEILS — scroll horizontal, cartes photos
+       ══════════════════════════════════════════════════════════ -->
+  {conseils.length > 0 && (
+    <div class="edp-section" style="background:#fff; padding: 44px 0;">
+      <div style="max-width:1060px; margin:0 auto; padding:0 24px;">
+        <div class="edp-section-header">
+          <div class="edp-section-title">NOS ARTICLES CONSEILS</div>
+          <div class="edp-scroll-arrows">
+            <button class="edp-scroll-btn" onclick="scrollCards('conseil-scroll', -360)" aria-label="Précédent">‹</button>
+            <button class="edp-scroll-btn" onclick="scrollCards('conseil-scroll', 360)" aria-label="Suivant">›</button>
           </div>
-          <a href="/articles" class="btn btn--outline">Tous les articles</a>
         </div>
-        <div class="grid-3">
-          {recentArticles.map(article => (
-            <a href={`/articles/${article.slug}`} class="card">
-              <div class="card__body">
-                <span class={`card__tag ${article.type === 'conseil' ? 'card__tag--blue' : ''}`}>
-                  {typeLabels[article.type] ?? article.type}
-                </span>
-                <div class="card__title">{article.titre}</div>
-                <p class="card__excerpt">{article.extrait}</p>
-                <div class="card__meta">
-                  <span>{article.complement}</span>
-                  <span>·</span>
-                  <span>{article.duree}</span>
-                </div>
+        <hr class="edp-section-sep" />
+        <div class="edp-cards-scroll" id="conseil-scroll">
+          {conseils.map(article => (
+            <a href={`/articles/${article.slug}`} class="edp-card">
+              <img
+                class="edp-card-img"
+                src={articlePhoto(article.complement, article.type)}
+                alt={article.titre}
+                loading="lazy"
+                width="320"
+                height="190"
+              />
+              <div class="edp-card-body">
+                <span class="edp-card-tag">{typeLabels[article.type] ?? article.type}</span>
+                <h3>{article.titre}</h3>
+                <p class="meta">{article.complement} · {article.duree}</p>
+                <p class="snippet">{article.extrait}</p>
               </div>
             </a>
           ))}
         </div>
       </div>
-    </section>
+    </div>
   )}
 
-  <!-- ── Notre équipe ───────────────────────────────────────── -->
-  <section class="section">
-    <div class="container">
-      <h2 class="section-title">Notre équipe d'experts</h2>
-      <p class="section-subtitle">Tous nos articles sont rédigés et vérifiés par des professionnels formés à la nutrition.</p>
-      <div class="team-grid">
-        {[
-          { nom: 'Sophie Marchand', role: 'Naturopathe certifiée', specialite: 'Micronutrition, immunité, gestion du stress' },
-          { nom: 'Thomas Girard', role: 'Coach sportif & Nutritionniste', specialite: 'Nutrition sportive, performance, récupération' },
-          { nom: 'Élise Renaud', role: 'Diététicienne-nutritionniste', specialite: 'Alimentation équilibrée, carences, santé féminine' },
-        ].map(expert => (
-          <div class="expert-card">
-            <div class="expert-card__avatar">{expert.nom.split(' ').map(n => n[0]).join('')}</div>
-            <div class="expert-card__name">{expert.nom}</div>
-            <div class="expert-card__role">{expert.role}</div>
-            <p class="expert-card__spec">{expert.specialite}</p>
-          </div>
-        ))}
+  <!-- ═══════════════════════════════════════════════════════════
+       RÉPERTOIRE — scroll horizontal, cartes photos rondes
+       ══════════════════════════════════════════════════════════ -->
+  <div class="edp-section">
+    <div class="edp-section-header">
+      <div class="edp-section-title">NOTRE RÉPERTOIRE DE COMPLÉMENTS</div>
+      <div class="edp-scroll-arrows">
+        <button class="edp-scroll-btn" onclick="scrollCards('rep-scroll', -360)" aria-label="Précédent">‹</button>
+        <button class="edp-scroll-btn" onclick="scrollCards('rep-scroll', 360)" aria-label="Suivant">›</button>
       </div>
+    </div>
+    <hr class="edp-section-sep" />
+    <div class="edp-rep-scroll" id="rep-scroll">
+      {complements.map(c => (
+        <a href={`/complement/${c.slug}`} class="edp-rep-item">
+          <div class="edp-rep-visual">
+            <img
+              src={compPhotos[c.slug] ?? 'https://images.unsplash.com/photo-1512069772995-ec65ed45afd6?w=280&h=280&fit=crop'}
+              alt={c.nom}
+              loading="lazy"
+              width="140"
+              height="140"
+            />
+          </div>
+          <div class="edp-rep-label">{c.nom}</div>
+        </a>
+      ))}
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       DERNIERS ARTICLES — scroll horizontal
+       ══════════════════════════════════════════════════════════ -->
+  {recentArticles.length > 0 && (
+    <div class="edp-section" style="background:#fff; padding: 44px 0;">
+      <div style="max-width:1060px; margin:0 auto; padding:0 24px;">
+        <div class="edp-section-header">
+          <div class="edp-section-title">DERNIERS ARTICLES</div>
+          <div style="display:flex; align-items:center; gap:12px;">
+            <div class="edp-scroll-arrows">
+              <button class="edp-scroll-btn" onclick="scrollCards('last-scroll', -360)" aria-label="Précédent">‹</button>
+              <button class="edp-scroll-btn" onclick="scrollCards('last-scroll', 360)" aria-label="Suivant">›</button>
+            </div>
+            <a href="/articles" class="btn btn--outline">Tous les articles →</a>
+          </div>
+        </div>
+        <hr class="edp-section-sep" />
+        <div class="edp-cards-scroll" id="last-scroll">
+          {recentArticles.map(article => (
+            <a href={`/articles/${article.slug}`} class="edp-card">
+              <img
+                class="edp-card-img"
+                src={articlePhoto(article.complement, article.type)}
+                alt={article.titre}
+                loading="lazy"
+                width="320"
+                height="190"
+              />
+              <div class="edp-card-body">
+                <span class="edp-card-tag">{typeLabels[article.type] ?? article.type}</span>
+                <h3>{article.titre}</h3>
+                <p class="meta">{article.complement} · {article.duree}</p>
+              </div>
+            </a>
+          ))}
+        </div>
+      </div>
+    </div>
+  )}
+
+  <!-- ═══════════════════════════════════════════════════════════
+       ÉDITÉ PAR DES SPÉCIALISTES
+       ══════════════════════════════════════════════════════════ -->
+  <section class="edp-specialists">
+    <div class="edp-specialists-inner">
+      <div class="edp-specialists-badge">✓ Édité par des spécialistes en nutrition</div>
+      <p>Tous nos contenus sont rédigés et validés par des naturopathes, diététiciens et coachs sportifs certifiés.</p>
+      <a href="/qui-sommes-nous" class="btn btn--blue" style="margin-top:16px;">Notre équipe d'experts →</a>
     </div>
   </section>
 
 </Layout>
 
 <style>
-/* Hero */
-.hero {
-  background: linear-gradient(135deg, #FFF7F5 0%, #F9FAFB 100%);
-  padding: 72px 0 64px;
-  border-bottom: 1px solid var(--color-border);
+/* ── HERO ─────────────────────────────────────────────────────── */
+.edp-hero {
+  background: linear-gradient(135deg, #0F172A 0%, #1E3A5F 50%, #1E40AF 100%);
+  padding: 80px 24px 90px;
+  text-align: center;
+  position: relative;
+  overflow: visible;
+  max-width: 100%;
 }
-.hero__inner {
-  max-width: 680px;
+.edp-hero::before {
+  content: '';
+  position: absolute;
+  top: -40%; left: -30%;
+  width: 160%; height: 180%;
+  background: radial-gradient(ellipse at 30% 50%, rgba(59,130,246,.12) 0%, transparent 55%);
+  pointer-events: none;
 }
-.hero__badge {
-  display: inline-block;
-  font-family: var(--font-heading);
-  font-size: 12px;
+.edp-hero-inner {
+  max-width: 760px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
+.edp-hero h1 {
+  font-size: clamp(28px, 4.5vw, 42px);
+  font-weight: 800;
+  line-height: 1.2;
+  margin-bottom: 16px;
+  color: #fff;
+  font-family: 'Montserrat', sans-serif;
+}
+.edp-hero h1 span { color: #60A5FA; }
+.edp-hero-sub {
+  font-size: 17px;
+  color: rgba(255,255,255,.65);
+  margin-bottom: 34px;
+  max-width: 580px;
+  margin-left: auto;
+  margin-right: auto;
+  font-family: 'Roboto', sans-serif;
+}
+.edp-hero-sub u { text-decoration: underline; text-underline-offset: 3px; }
+
+/* Search */
+.edp-search-wrap {
+  max-width: 580px;
+  margin: 0 auto;
+  position: relative;
+}
+.edp-search-bar {
+  display: flex;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 24px rgba(0,0,0,.2);
+}
+.edp-search-bar input {
+  flex: 1;
+  padding: 17px 22px;
+  font-size: 16px;
+  font-family: 'Montserrat', sans-serif;
+  border: none;
+  outline: none;
+  background: #fff;
+  color: #1A1A1A;
+  min-width: 0;
+}
+.edp-search-bar input::placeholder { color: #9CA3AF; }
+.edp-search-bar button {
+  padding: 17px 28px;
+  font-size: 15px;
+  font-weight: 600;
+  font-family: 'Montserrat', sans-serif;
+  border: none;
+  cursor: pointer;
+  background: #3B82F6;
+  color: #fff;
+  transition: background .2s;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.edp-search-bar button:hover { background: #2563EB; }
+.edp-search-dropdown {
+  display: none;
+  position: absolute;
+  top: 100%; left: 0; right: 0;
+  background: #fff;
+  border-radius: 0 0 12px 12px;
+  box-shadow: 0 8px 24px rgba(0,0,0,.15);
+  max-height: 360px;
+  overflow-y: auto;
+  z-index: 100;
+}
+.edp-search-dropdown.active { display: block; }
+.edp-search-examples {
+  font-size: 14px;
+  color: rgba(255,255,255,.4);
+  margin-top: 18px;
+  font-family: 'Roboto', sans-serif;
+}
+
+/* ── OBJECTIFS ────────────────────────────────────────────────── */
+.edp-objectives {
+  padding: 32px 0 0;
+  background: #fff;
+  border-bottom: 1px solid #E5E7EB;
+  overflow: hidden;
+}
+.edp-objectives-container {
+  max-width: 1060px;
+  margin: 0 auto;
+  padding: 0 24px 28px;
+}
+.edp-obj-title {
+  font-size: 22px;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 1px;
-  color: var(--color-cta);
-  background: #FFF0EB;
-  border: 1px solid #FFD5C8;
-  padding: 6px 14px;
-  border-radius: var(--radius-pill);
+  color: #1A1A1A;
   margin-bottom: 20px;
+  font-family: 'Montserrat', sans-serif;
 }
-.hero__title {
-  font-size: 48px;
-  font-weight: 800;
-  line-height: 1.1;
-  margin-bottom: 20px;
-  color: var(--color-text);
-}
-.hero__subtitle {
-  font-size: 18px;
-  color: var(--color-text-light);
-  line-height: 1.6;
-  margin-bottom: 32px;
-  max-width: 560px;
-}
-.hero__actions { display: flex; gap: 12px; flex-wrap: wrap; }
-
-@media (max-width: 768px) {
-  .hero { padding: 48px 0; }
-  .hero__title { font-size: 32px; }
-}
-
-/* Section header avec bouton droite */
-.section-header {
+.edp-objectives-scroll {
   display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 16px;
-  margin-bottom: 32px;
+  gap: 20px;
+  overflow-x: auto;
+  overflow-y: visible;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  padding: 8px 0 12px;
 }
-.section-header .section-title,
-.section-header .section-subtitle { margin-bottom: 4px; }
-
-/* Objectifs grid */
-.objectifs-grid {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 12px;
-}
-.objectif-card {
+.edp-objectives-scroll::-webkit-scrollbar { display: none; }
+.edp-obj-item {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
-  padding: 20px 12px;
-  background: var(--color-white);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-card);
+  gap: 12px;
+  flex-shrink: 0;
   text-decoration: none;
-  transition: all var(--transition);
-  text-align: center;
+  transition: transform .15s;
 }
-.objectif-card:hover { border-color: var(--color-cta); box-shadow: 0 4px 16px rgba(255,112,67,0.12); transform: translateY(-2px); }
-.objectif-card__icon { font-size: 28px; }
-.objectif-card__label { font-family: var(--font-heading); font-size: 12px; font-weight: 700; color: var(--color-text); line-height: 1.3; }
-
-@media (max-width: 900px) { .objectifs-grid { grid-template-columns: repeat(4, 1fr); } }
-@media (max-width: 480px) { .objectifs-grid { grid-template-columns: repeat(2, 1fr); } }
-
-/* Complements grid */
-.complements-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 16px;
-}
-.complement-card {
-  background: var(--color-white);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-card);
-  padding: 20px;
-  text-decoration: none;
-  transition: all var(--transition);
-}
-.complement-card:hover { border-color: var(--color-accent); box-shadow: var(--shadow-hover); transform: translateY(-2px); }
-.complement-card__name { font-family: var(--font-heading); font-size: 16px; font-weight: 700; color: var(--color-text); margin-bottom: 6px; }
-.complement-card__desc { font-size: 13px; color: var(--color-text-light); line-height: 1.5; margin-bottom: 12px; }
-.complement-card__cta { font-size: 13px; font-weight: 600; color: var(--color-accent); }
-
-@media (max-width: 900px) { .complements-grid { grid-template-columns: repeat(3, 1fr); } }
-@media (max-width: 640px) { .complements-grid { grid-template-columns: repeat(2, 1fr); } }
-
-/* Expert cards */
-.team-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
-.expert-card {
-  background: var(--color-white);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-card);
-  padding: 28px 24px;
-  text-align: center;
-}
-.expert-card__avatar {
-  width: 64px;
-  height: 64px;
-  background: var(--color-cta);
-  color: #fff;
-  border-radius: 50%;
+.edp-obj-item:hover { transform: translateY(-3px); }
+.edp-obj-img {
+  width: 150px;
+  height: 150px;
+  border-radius: 20px;
+  background: #F6F7F8;
+  border: 2px solid #E5E7EB;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: var(--font-heading);
+  overflow: hidden;
+  transition: border-color .2s, box-shadow .2s;
+}
+.edp-obj-item:hover .edp-obj-img {
+  border-color: #3B82F6;
+  box-shadow: 0 4px 16px rgba(59,130,246,.15);
+}
+.edp-obj-img img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  border-radius: 18px;
+}
+.edp-obj-label {
+  font-size: 15px;
+  font-weight: 600;
+  color: #374151;
+  text-align: center;
+  white-space: nowrap;
+  font-family: 'Montserrat', sans-serif;
+}
+
+/* ── SECTION COMMUNE ─────────────────────────────────────────── */
+.edp-section {
+  max-width: 1060px;
+  margin: 0 auto;
+  padding: 44px 24px;
+  overflow: hidden;
+}
+
+/* ── COMPARATIFS ─────────────────────────────────────────────── */
+.edp-compa-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+.edp-compa-card {
+  background: #fff;
+  border: 1px solid #E5E7EB;
+  border-radius: 12px;
+  padding: 16px 18px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: border-color .2s, box-shadow .2s;
+  text-decoration: none;
+}
+.edp-compa-card:hover {
+  border-color: #3B82F6;
+  box-shadow: 0 3px 12px rgba(59,130,246,.08);
+}
+.edp-compa-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: #3B82F6;
+  flex-shrink: 0;
+}
+.edp-compa-info { flex: 1; min-width: 0; }
+.edp-compa-info h3 {
+  font-size: 15px;
+  font-weight: 700;
+  color: #1A1A1A;
+  margin-bottom: 2px;
+  font-family: 'Montserrat', sans-serif;
+  line-height: 1.3;
+}
+.edp-compa-info p {
+  font-size: 13px;
+  color: #9CA3AF;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-family: 'Roboto', sans-serif;
+}
+.edp-compa-arrow {
+  color: #D1D5DB;
   font-size: 20px;
   font-weight: 700;
-  margin: 0 auto 14px;
+  transition: color .15s;
+  flex-shrink: 0;
+  line-height: 1;
 }
-.expert-card__name { font-family: var(--font-heading); font-size: 17px; font-weight: 700; color: var(--color-text); margin-bottom: 4px; }
-.expert-card__role { font-size: 13px; color: var(--color-text-light); font-weight: 500; margin-bottom: 10px; }
-.expert-card__spec { font-size: 13px; color: var(--color-text-light); line-height: 1.5; }
+.edp-compa-card:hover .edp-compa-arrow { color: #3B82F6; }
 
-@media (max-width: 768px) { .team-grid { grid-template-columns: 1fr; } }
+/* ── RÉPERTOIRE ──────────────────────────────────────────────── */
+.edp-rep-scroll {
+  display: flex;
+  gap: 20px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.edp-rep-scroll::-webkit-scrollbar { display: none; }
+.edp-rep-item {
+  flex: 0 0 160px;
+  text-align: center;
+  display: block;
+  text-decoration: none;
+}
+.edp-rep-visual {
+  width: 140px;
+  height: 140px;
+  border-radius: 20px;
+  background: #F6F7F8;
+  border: 2px solid #E5E7EB;
+  margin: 0 auto 12px;
+  overflow: hidden;
+  transition: border-color .2s;
+}
+.edp-rep-item:hover .edp-rep-visual { border-color: #3B82F6; }
+.edp-rep-visual img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  border-radius: 18px;
+}
+.edp-rep-label {
+  font-size: 15px;
+  font-weight: 600;
+  color: #374151;
+  font-family: 'Montserrat', sans-serif;
+}
+
+/* ── TOP 10 ──────────────────────────────────────────────────── */
+.edp-top10-section { background: #F9FAFB; }
+.edp-top10-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+.edp-top10-card {
+  background: var(--card-bg, #EFF6FF);
+  border: 1px solid var(--card-border, #BFDBFE);
+  border-radius: 12px;
+  padding: 18px 18px 16px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  text-decoration: none;
+  transition: box-shadow .2s, transform .15s, border-color .2s;
+}
+.edp-top10-card:hover {
+  box-shadow: 0 4px 16px rgba(0,0,0,.08);
+  transform: translateY(-2px);
+  border-color: #3B82F6;
+}
+.edp-top10-emoji {
+  font-size: 28px;
+  flex-shrink: 0;
+  line-height: 1;
+}
+.edp-top10-body { flex: 1; min-width: 0; }
+.edp-top10-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: #1A1A1A;
+  font-family: 'Montserrat', sans-serif;
+  margin-bottom: 3px;
+}
+.edp-top10-desc {
+  font-size: 12px;
+  color: #6B7280;
+  font-family: 'Roboto', sans-serif;
+  line-height: 1.4;
+}
+.edp-top10-arrow {
+  font-size: 20px;
+  color: #9CA3AF;
+  font-weight: 700;
+  flex-shrink: 0;
+  transition: color .15s;
+}
+.edp-top10-card:hover .edp-top10-arrow { color: #3B82F6; }
+.edp-top10-category-label {
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #64748B;
+  margin-bottom: 0.75rem;
+}
+@media (max-width: 768px) {
+  .edp-top10-grid { grid-template-columns: 1fr; }
+}
+@media (min-width: 769px) and (max-width: 1024px) {
+  .edp-top10-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* ── SPECIALISTS ─────────────────────────────────────────────── */
+.edp-specialists {
+  background: #1E293B;
+  padding: 48px 24px;
+  text-align: center;
+  margin-top: 0;
+}
+.edp-specialists-inner {
+  max-width: 600px;
+  margin: 0 auto;
+}
+.edp-specialists-badge {
+  display: inline-block;
+  background: rgba(59,130,246,.15);
+  color: #60A5FA;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 8px 20px;
+  border-radius: 999px;
+  margin-bottom: 16px;
+}
+.edp-specialists p {
+  color: rgba(255,255,255,.6);
+  font-size: 16px;
+  line-height: 1.6;
+  font-family: 'Roboto', sans-serif;
+}
+
+/* ── RESPONSIVE ──────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .edp-hero { padding: 44px 16px 52px; }
+  .edp-hero h1 { font-size: 26px; }
+  .edp-hero-sub { font-size: 14px; }
+  .edp-search-bar input { padding: 14px 14px; font-size: 14px; }
+  .edp-search-bar button { padding: 14px 16px; font-size: 13px; }
+  .edp-obj-img { width: 110px; height: 110px; }
+  .edp-obj-label { font-size: 13px; }
+  .edp-compa-grid { grid-template-columns: 1fr; }
+  .edp-rep-visual { width: 100px; height: 100px; }
+  .edp-rep-item { flex: 0 0 120px; }
+  .edp-section { padding: 32px 16px; }
+}
 </style>
+
+<script>
+function scrollCards(id: string, delta: number) {
+  const el = document.getElementById(id);
+  if (el) el.scrollBy({ left: delta, behavior: 'smooth' });
+}
+
+function handleSearch() {
+  const val = (document.getElementById('hero-search') as HTMLInputElement)?.value?.trim();
+  if (val) window.location.href = `/articles?q=${encodeURIComponent(val)}`;
+}
+
+document.getElementById('hero-search')?.addEventListener('keydown', (e) => {
+  if ((e as KeyboardEvent).key === 'Enter') handleSearch();
+});
+</script>
