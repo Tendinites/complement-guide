@@ -39,9 +39,33 @@ const compPhotos: Record<string, string> = {
   'fer':            'https://images.unsplash.com/photo-1558030006-450675393462?w=280&h=280&fit=crop',
 };
 
-// Photo pour articles (par complément)
-const articlePhoto = (slug: string, type: string) => {
-  const base = compPhotos[slug] || 'https://images.unsplash.com/photo-1512069772995-ec65ed45afd6?w=640&h=400&fit=crop';
+// Photo spécifique par article (slug)
+const articleSlugPhotos: Record<string, string> = {
+  'ashwagandha-stress-comparatif':      'https://images.unsplash.com/photo-1616391182219-e080b4d1042e?w=640&h=400&fit=crop',
+  'bain-froid-maison-guide':            'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=640&h=400&fit=crop',
+  'bottes-compression-comparatif':      'https://images.unsplash.com/photo-1539185441755-769473a23570?w=640&h=400&fit=crop',
+  'collagene-marin-comparatif':         'https://images.unsplash.com/photo-1515377905703-c4788e51af15?w=640&h=400&fit=crop',
+  'creatine-guide-complet':             'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=640&h=400&fit=crop',
+  'cryotherapie-bain-froid-guide':      'https://images.unsplash.com/photo-1556909114-44e3e9399a2b?w=640&h=400&fit=crop',
+  'electrostimulation-ems-comparatif':  'https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=640&h=400&fit=crop',
+  'fer-carence-femme':                  'https://images.unsplash.com/photo-1558030006-450675393462?w=640&h=400&fit=crop',
+  'foam-roller-guide':                  'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=640&h=400&fit=crop',
+  'magnesium-bisglycinate-guide':       'https://images.unsplash.com/photo-1628771065518-0d82f1938462?w=640&h=400&fit=crop',
+  'multivitamines-guide':               'https://images.unsplash.com/photo-1512069772995-ec65ed45afd6?w=640&h=400&fit=crop',
+  'omega-3-epa-vs-dha-quelles-differences-et-lequel-pren': 'https://images.unsplash.com/photo-1535185384036-28bbc8035f28?w=640&h=400&fit=crop',
+  'omega-3-meilleur-complement':        'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?w=640&h=400&fit=crop',
+  'omega-3-omega-3-et-inflammation-chronique-ce-que-dise': 'https://images.pexels.com/photos/3807530/pexels-photo-3807530.jpeg?w=640&h=400&fit=crop',
+  'pistolet-massage-comparatif':        'https://images.unsplash.com/photo-1600334089648-b0d9d3028eb2?w=640&h=400&fit=crop',
+  'probiotiques-comparatif':            'https://images.unsplash.com/photo-1574316071802-0d684efa7bf5?w=640&h=400&fit=crop',
+  'vitamine-d3-k2-comparatif':          'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=640&h=400&fit=crop',
+  'whey-proteine-comparatif':           'https://images.unsplash.com/photo-1593095948071-474c5cc2989d?w=640&h=400&fit=crop',
+  'zinc-immunite-guide':                'https://images.unsplash.com/photo-1587854692152-cbe660dbde88?w=640&h=400&fit=crop',
+};
+
+// Photo pour articles (par slug d'abord, sinon par complément)
+const articlePhoto = (slug: string, complement: string) => {
+  if (articleSlugPhotos[slug]) return articleSlugPhotos[slug];
+  const base = compPhotos[complement] || 'https://images.unsplash.com/photo-1512069772995-ec65ed45afd6?w=640&h=400&fit=crop';
   return base.replace('w=280&h=280', 'w=640&h=400');
 };
 ---
@@ -179,7 +203,7 @@ const articlePhoto = (slug: string, type: string) => {
           <a href={`/articles/${article.slug}`} class="edp-latest-card">
             <div class="edp-latest-img">
               <img
-                src={articlePhoto(article.complement, article.type)}
+                src={articlePhoto(article.slug, article.complement)}
                 alt={article.titre}
                 loading="lazy"
                 width="360"
