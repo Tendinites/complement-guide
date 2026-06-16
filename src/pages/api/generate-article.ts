@@ -22,8 +22,8 @@ import { articles as publishedArticles } from '../../data/articles';
 export const prerender = false;
 export const maxDuration = 60;
 
-const GITHUB_OWNER  = 'OWNER_A_DEFINIR';   // à remplacer par le vrai owner GitHub
-const GITHUB_REPO   = 'REPO_A_DEFINIR';    // à remplacer par le vrai repo
+const GITHUB_OWNER  = 'Tendinites';
+const GITHUB_REPO   = 'complement-guide';
 const GITHUB_BRANCH = 'main';
 
 // Marque partenaire (backlinks discrets) — à configurer via env variable

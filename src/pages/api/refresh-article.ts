@@ -13,8 +13,8 @@ import { Octokit } from '@octokit/rest';
 export const prerender = false;
 export const maxDuration = 60;
 
-const GITHUB_OWNER  = 'OWNER_A_DEFINIR';
-const GITHUB_REPO   = 'REPO_A_DEFINIR';
+const GITHUB_OWNER  = 'Tendinites';
+const GITHUB_REPO   = 'complement-guide';
 const GITHUB_BRANCH = 'main';
 
 export const GET: APIRoute = async ({ request }) => {
