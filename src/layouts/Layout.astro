@@ -85,13 +85,14 @@ if (jsonLd) {
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImageURL} />
 
-    <meta name="theme-color" content="#10B981" />
+    <meta name="theme-color" content="#22C55E" />
 
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="alternate icon" type="image/x-icon" href="/favicon.ico" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Roboto:wght@300;400;500;600;700&display=swap" />
 
     {allJsonLd.map((data) => (
       <script type="application/ld+json" set:html={JSON.stringify(data)} />

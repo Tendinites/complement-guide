@@ -54,6 +54,16 @@ const heroPhotos: Record<string, string> = {
 };
 const heroImg = heroPhotos[article.complement] ?? heroPhotos['multivitamines'];
 
+// Table des matières générée depuis les H2 du contenu
+const tocItems = (() => {
+  const html = article.contenu_html ?? '';
+  const matches = [...html.matchAll(/<h2[^>]*>([\s\S]*?)<\/h2>/gi)];
+  return matches.map((m, i) => ({
+    text: m[1].replace(/<[^>]+>/g, '').trim(),
+    id: `h2-${i}`,
+  }));
+})();
+
 const articleLD = {
   '@context': 'https://schema.org',
   '@type': 'Article',
@@ -80,6 +90,7 @@ const breadcrumbLD = {
   title={`${article.titre} — Complément Guide`}
   description={article.extrait}
   ogType="article"
+  ogImage={heroImg}
   canonicalOverride={article.canonical}
   noindex={!!article.canonical}
   jsonLd={[articleLD, breadcrumbLD]}
@@ -175,6 +186,18 @@ const breadcrumbLD = {
 
       <!-- SIDEBAR -->
       <aside class="article-sidebar">
+
+        <!-- Table des matières -->
+        {tocItems.length >= 2 && (
+          <div class="sidebar-box">
+            <div class="sidebar-box__label">Sommaire</div>
+            <nav class="toc-nav" aria-label="Table des matières">
+              {tocItems.map(item => (
+                <a href={`#${item.id}`} class="toc-nav__item">{item.text}</a>
+              ))}
+            </nav>
+          </div>
+        )}
 
         <!-- Guide complément ou catégorie récup -->
         {complement && (
@@ -766,6 +789,26 @@ const breadcrumbLD = {
 }
 .sidebar-related__item:hover .sidebar-related__title { color: #3B82F6; }
 
+/* ── TABLE DES MATIÈRES ───────────────────────────────────────── */
+.toc-nav { display: flex; flex-direction: column; gap: 2px; }
+.toc-nav__item {
+  font-size: 13px;
+  font-weight: 500;
+  font-family: 'Montserrat', sans-serif;
+  color: #374151;
+  text-decoration: none;
+  padding: 6px 10px;
+  border-radius: 6px;
+  border-left: 2px solid transparent;
+  line-height: 1.35;
+  transition: background .15s, color .15s, border-color .15s;
+}
+.toc-nav__item:hover {
+  background: #EFF6FF;
+  color: #3B82F6;
+  border-left-color: #3B82F6;
+}
+
 /* ── CTA PARTENAIRE MOBILE ────────────────────────────────────── */
 .article-cta-mobile {
   display: none;
@@ -814,3 +857,10 @@ const breadcrumbLD = {
   .edp-article-author-box { padding: 24px 20px; }
 }
 </style>
+
+<script>
+  // Injecte les IDs sur les H2 pour que les liens TOC fonctionnent
+  document.querySelectorAll('.article-content h2').forEach((el, i) => {
+    el.id = `h2-${i}`;
+  });
+</script>

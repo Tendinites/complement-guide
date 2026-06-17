@@ -62,6 +62,14 @@ function slugify(str: string): string {
     .replace(/^-|-$/g, '');
 }
 
+// Tronque à la borne de mot la plus proche (jamais au milieu d'un segment)
+function truncateAtWord(str: string, max: number): string {
+  if (str.length <= max) return str;
+  const cut = str.slice(0, max);
+  const lastDash = cut.lastIndexOf('-');
+  return lastDash > 10 ? cut.slice(0, lastDash) : cut;
+}
+
 // Sélectionne le prochain topic non encore publié
 async function pickTopic(existingSlugs: string[]) {
   // Filtre les topics déjà couverts (slug approximatif)
@@ -120,7 +128,8 @@ export const GET: APIRoute = async ({ request }) => {
     const dateISO = new Date().toISOString().split('T')[0];
     const existingSlugs = await getExistingSlugs();
     const topic = await pickTopic(existingSlugs);
-    const slug = `${topic.complement}-${slugify(topic.titre).slice(0, 45)}`;
+    const maxSuffix = Math.max(20, 58 - topic.complement.length);
+    const slug = `${topic.complement}-${truncateAtWord(slugify(topic.titre), maxSuffix)}`;
 
     console.log(`🎯 Topic : ${topic.titre} (${topic.complement}) → ${slug}`);
 
@@ -290,6 +299,9 @@ RÉPONSE : uniquement JSON valide, pas de markdown, pas de backticks
   "titre": "string (55-75 caractères, reprend le mot-clé exact de l'intention)",
   "extrait": "string (150-170 caractères, meta description qui répond directement à la question)",
   "duree": "string (ex: '6 min')",
+  "marque_produit": "${isComparatif ? 'Nom exact du produit #1 de ton comparatif' : ''}",
+  "marque_lien": "${isComparatif ? "URL officielle d'achat ou page produit #1 (lien réel et valide)" : ''}",
+  "marque_description": "${isComparatif ? 'Description CTA courte du produit #1, 1 phrase incitative' : ''}",
   "contenu_html": "string HTML complet — les guillemets internes doivent être échappés"
 }`;
 
@@ -322,10 +334,10 @@ RÉPONSE : uniquement JSON valide, pas de markdown, pas de backticks
     date: dateISO,
     updated: dateISO,
     contenu_html: parsed.contenu_html,
-    // JOLT uniquement pour les équipements de récupération
-    marque_produit: isRecovery ? PARTNER_BRAND : '',
-    marque_lien:    isRecovery ? PARTNER_URL   : '',
-    marque_description: isRecovery ? PARTNER_DESC : '',
+    // JOLT pour la récupération, #1 comparatif pour les articles nutrition
+    marque_produit:     isRecovery ? PARTNER_BRAND                  : (isComparatif ? (parsed.marque_produit ?? '')     : ''),
+    marque_lien:        isRecovery ? PARTNER_URL                    : (isComparatif ? (parsed.marque_lien ?? '')         : ''),
+    marque_description: isRecovery ? PARTNER_DESC                   : (isComparatif ? (parsed.marque_description ?? '') : ''),
   };
 }
 
