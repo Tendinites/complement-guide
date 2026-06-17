@@ -140,6 +140,17 @@ const breadcrumbLD = {
           <p>{article.extrait}</p>
         </div>
 
+        <!-- CTA partenaire mobile (masqué sur desktop — sidebar s'en charge) -->
+        {article.marque_produit && article.marque_lien && (
+          <div class="article-cta-mobile">
+            <div class="article-cta-mobile__label">Notre sélection</div>
+            <p class="article-cta-mobile__desc">{article.marque_description ?? `Découvrez ${article.marque_produit}`}</p>
+            <a href={article.marque_lien} class="article-cta-mobile__btn" target="_blank" rel="noopener sponsored">
+              Voir le produit →
+            </a>
+          </div>
+        )}
+
         <!-- Contenu généré par le robot -->
         {article.contenu_html && (
           <div class="article-content" set:html={article.contenu_html} />
@@ -754,6 +765,48 @@ const breadcrumbLD = {
   font-family: 'Montserrat', sans-serif;
 }
 .sidebar-related__item:hover .sidebar-related__title { color: #3B82F6; }
+
+/* ── CTA PARTENAIRE MOBILE ────────────────────────────────────── */
+.article-cta-mobile {
+  display: none;
+  background: linear-gradient(135deg, #EFF6FF 0%, #DBEAFE 100%);
+  border: 1px solid #BFDBFE;
+  border-radius: 12px;
+  padding: 18px 20px;
+  margin-bottom: 32px;
+}
+@media (max-width: 1024px) {
+  .article-cta-mobile { display: block; }
+}
+.article-cta-mobile__label {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #3B82F6;
+  margin-bottom: 10px;
+}
+.article-cta-mobile__desc {
+  font-size: 14px;
+  color: #374151;
+  line-height: 1.5;
+  margin-bottom: 14px;
+}
+.article-cta-mobile__btn {
+  display: block;
+  background: #3B82F6;
+  color: #fff;
+  text-align: center;
+  padding: 13px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: 'Montserrat', sans-serif;
+  text-decoration: none;
+  transition: background .2s;
+}
+.article-cta-mobile__btn:hover { background: #2563EB; }
 
 @media (max-width: 768px) {
   .article-wrap { padding: 24px 0 48px; }
