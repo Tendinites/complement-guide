@@ -64,6 +64,8 @@ const tocItems = (() => {
   }));
 })();
 
+const SITE = 'https://complement-guide.vercel.app';
+
 const articleLD = {
   '@context': 'https://schema.org',
   '@type': 'Article',
@@ -71,19 +73,41 @@ const articleLD = {
   description: article.extrait,
   datePublished: article.date,
   dateModified: article.updated ?? new Date().toISOString().split('T')[0],
-  author: { '@type': 'Person', name: 'La Rédaction', url: '/qui-sommes-nous' },
-  publisher: { '@type': 'Organization', name: 'Complément Guide', url: 'https://monsite.fr' },
+  author: { '@type': 'Person', name: 'La Rédaction', url: `${SITE}/qui-sommes-nous` },
+  publisher: { '@type': 'Organization', name: 'Complément Guide', url: SITE },
 };
 
 const breadcrumbLD = {
   '@context': 'https://schema.org',
   '@type': 'BreadcrumbList',
   itemListElement: [
-    { '@type': 'ListItem', position: 1, name: 'Accueil', item: 'https://monsite.fr' },
-    { '@type': 'ListItem', position: 2, name: complement?.nom ?? article.complement, item: `https://monsite.fr/complement/${article.complement}` },
+    { '@type': 'ListItem', position: 1, name: 'Accueil', item: SITE },
+    { '@type': 'ListItem', position: 2, name: complement?.nom ?? article.complement, item: `${SITE}/complement/${article.complement}` },
     { '@type': 'ListItem', position: 3, name: article.titre },
   ],
 };
+
+// FAQ Schema — extrait les <details><summary>Q</summary>R</details> du contenu
+const faqItems = (() => {
+  const html = article.contenu_html ?? '';
+  const matches = [...html.matchAll(/<details[^>]*>\s*<summary[^>]*>([\s\S]*?)<\/summary>([\s\S]*?)<\/details>/gi)];
+  return matches.map(m => ({
+    question: m[1].replace(/<[^>]+>/g, '').trim(),
+    answer: m[2].replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim().slice(0, 500),
+  })).filter(i => i.question && i.answer);
+})();
+
+const faqLD = faqItems.length > 0 ? {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqItems.map(i => ({
+    '@type': 'Question',
+    name: i.question,
+    acceptedAnswer: { '@type': 'Answer', text: i.answer },
+  })),
+} : null;
+
+const jsonLdBlocks = [articleLD, breadcrumbLD, ...(faqLD ? [faqLD] : [])];
 ---
 
 <Layout
@@ -93,7 +117,7 @@ const breadcrumbLD = {
   ogImage={heroImg}
   canonicalOverride={article.canonical}
   noindex={!!article.canonical}
-  jsonLd={[articleLD, breadcrumbLD]}
+  jsonLd={jsonLdBlocks}
 >
 
   <!-- ── Hero article ─────────────────────────────────────────── -->
