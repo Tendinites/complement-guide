@@ -5,7 +5,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "git -C /Users/emilevucko/Desktop/complement-guide pull origin main 2>/dev/null || true",
+            "command": "git pull origin main 2>/dev/null || true",
             "statusMessage": "Synchronisation avec GitHub...",
             "timeout": 30
           }
@@ -17,7 +17,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "cd /Users/emilevucko/Desktop/complement-guide && git add -A && git commit -m \"auto: modifications via Claude\" && git push origin main 2>/dev/null || true",
+            "command": "git add -A && git commit -m \"auto: modifications via Claude\" && git push origin main 2>/dev/null || true",
             "statusMessage": "Push vers GitHub...",
             "timeout": 60
           }
