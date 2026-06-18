@@ -482,19 +482,12 @@ const breadcrumbLD = {
 .article-content td { border-bottom: 1px solid #E5E7EB; padding: 11px 16px; vertical-align: top; }
 .article-content tr:nth-child(even) td { background: #F9FAFB; }
 
-/* Wrapper scrollable injecté par JS sur mobile */
-.article-content .table-scroll-wrapper {
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-  margin: 28px 0;
-  border-radius: 8px;
-}
-.article-content .table-scroll-wrapper table {
-  margin: 0;
-  min-width: 500px;
-  border-radius: 0;
-  width: auto;
-}
+/* Table cards — injectés par JS sur mobile à la place des tableaux */
+.table-cards { margin: 24px 0; display: flex; flex-direction: column; gap: 10px; }
+.table-card { background: #fff; border: 1px solid #E5E7EB; border-radius: 8px; padding: 14px; display: flex; flex-direction: column; gap: 8px; }
+.table-card__item { display: flex; align-items: flex-start; gap: 10px; font-size: 14px; line-height: 1.5; }
+.table-card__label { font-weight: 700; font-size: 11px; text-transform: uppercase; letter-spacing: 0.4px; color: #6B7280; min-width: 80px; flex-shrink: 0; padding-top: 2px; }
+.table-card__value { color: #1A1A1A; flex: 1; }
 
 /* Steps */
 .article-content ol.steps { padding-left: 0; list-style: none; }
@@ -884,10 +877,7 @@ const breadcrumbLD = {
   .article-content { font-size: 16px; }
   .article-content h2 { font-size: 19px; margin: 32px 0 12px; }
   .article-content h3 { font-size: 16px; margin: 22px 0 10px; }
-  .article-content .table-scroll-wrapper table td,
-  .article-content .table-scroll-wrapper table th { white-space: nowrap; min-width: 80px; }
-  .article-content .table-scroll-wrapper table td:last-child,
-  .article-content .table-scroll-wrapper table th:last-child { white-space: normal; min-width: 120px; }
+  /* Les tableaux sont remplacés par .table-cards via JS — pas de règle table nécessaire ici */
   .article-content .edp-rank-card { padding: 18px 16px; }
   .article-content .edp-rank-title { font-size: 17px; }
   .article-content .edp-rank-cta { width: 100%; justify-content: center; padding: 13px; }
@@ -904,13 +894,40 @@ const breadcrumbLD = {
     el.id = `h2-${i}`;
   });
 
-  // Wrapper scrollable pour les tableaux sur mobile
-  document.querySelectorAll('.article-content table').forEach(table => {
-    if (!table.closest('.table-scroll-wrapper')) {
-      const wrapper = document.createElement('div');
-      wrapper.className = 'table-scroll-wrapper';
-      table.parentNode.insertBefore(wrapper, table);
-      wrapper.appendChild(table);
-    }
-  });
+  // Sur mobile : remplace chaque tableau par des cartes empilées (pas de scroll horizontal)
+  if (window.innerWidth <= 768) {
+    document.querySelectorAll('.article-content table').forEach(table => {
+      const headerCells = table.querySelectorAll('thead th');
+      const headers = [...headerCells].map(h => h.textContent.trim());
+      const bodyRows = [...table.querySelectorAll('tbody tr')];
+      const dataRows = bodyRows.length ? bodyRows : [...table.querySelectorAll('tr')].slice(headerCells.length ? 1 : 0);
+      if (!dataRows.length) return;
+      const container = document.createElement('div');
+      container.className = 'table-cards';
+      dataRows.forEach(row => {
+        const cells = [...row.querySelectorAll('td')];
+        if (!cells.length) return;
+        const card = document.createElement('div');
+        card.className = 'table-card';
+        cells.forEach((cell, i) => {
+          if (!cell.textContent.trim()) return;
+          const item = document.createElement('div');
+          item.className = 'table-card__item';
+          if (headers[i]) {
+            const lbl = document.createElement('span');
+            lbl.className = 'table-card__label';
+            lbl.textContent = headers[i];
+            item.appendChild(lbl);
+          }
+          const val = document.createElement('span');
+          val.className = 'table-card__value';
+          val.innerHTML = cell.innerHTML;
+          item.appendChild(val);
+          card.appendChild(item);
+        });
+        container.appendChild(card);
+      });
+      table.replaceWith(container);
+    });
+  }
 </script>
