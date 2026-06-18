@@ -242,7 +242,7 @@ const totalArticles = articles.length;
   font-family: 'Montserrat', sans-serif;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: #60A5FA;
+  color: #86EFAC;
   margin-bottom: 16px;
 }
 .al-hero__title {
@@ -543,11 +543,16 @@ const totalArticles = articles.length;
 
 /* ── RESPONSIVE ───────────────────────────────────────────────── */
 @media (max-width: 600px) {
-  .al-hero { padding: 48px 20px 40px; }
-  .al-wrap { padding: 32px 16px 16px; }
+  .al-hero { padding: 40px 16px 32px; }
+  .al-hero__sub { font-size: 15px; margin-bottom: 24px; }
+  .al-hero__title { letter-spacing: -0.3px; }
+  .al-wrap { padding: 28px 16px 12px; }
   .al-section-h2 { font-size: 20px; }
   .al-cards { grid-template-columns: 1fr; }
   .al-cards > .al-card--lead { grid-column: 1; grid-row: auto; }
+  .al-card__body { padding: 14px 16px 16px; }
+  .al-group { margin-bottom: 36px; }
+  .al-chip { font-size: 12.5px; padding: 7px 14px; }
 }
 </style>
 
