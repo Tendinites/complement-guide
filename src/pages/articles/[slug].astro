@@ -354,7 +354,6 @@ const breadcrumbLD = {
 .article-wrap {
   background: #F9FAFB;
   padding: 40px 0 64px;
-  overflow-x: hidden;
 }
 .article-layout {
   max-width: 1060px;
@@ -482,6 +481,20 @@ const breadcrumbLD = {
 .article-content th { background: #1E293B; color: #fff; font-family: 'Montserrat', sans-serif; font-size: 12px; font-weight: 700; text-align: left; padding: 12px 16px; }
 .article-content td { border-bottom: 1px solid #E5E7EB; padding: 11px 16px; vertical-align: top; }
 .article-content tr:nth-child(even) td { background: #F9FAFB; }
+
+/* Wrapper scrollable injecté par JS sur mobile */
+.article-content .table-scroll-wrapper {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin: 28px 0;
+  border-radius: 8px;
+}
+.article-content .table-scroll-wrapper table {
+  margin: 0;
+  min-width: 500px;
+  border-radius: 0;
+  width: auto;
+}
 
 /* Steps */
 .article-content ol.steps { padding-left: 0; list-style: none; }
@@ -871,11 +884,10 @@ const breadcrumbLD = {
   .article-content { font-size: 16px; }
   .article-content h2 { font-size: 19px; margin: 32px 0 12px; }
   .article-content h3 { font-size: 16px; margin: 22px 0 10px; }
-  .article-content table { display: block; overflow-x: auto; overflow-y: visible; -webkit-overflow-scrolling: touch; border-radius: 0; }
-  .article-content table td,
-  .article-content table th { min-width: 90px; white-space: nowrap; }
-  .article-content table td:last-child,
-  .article-content table th:last-child { white-space: normal; min-width: 140px; }
+  .article-content .table-scroll-wrapper table td,
+  .article-content .table-scroll-wrapper table th { white-space: nowrap; min-width: 80px; }
+  .article-content .table-scroll-wrapper table td:last-child,
+  .article-content .table-scroll-wrapper table th:last-child { white-space: normal; min-width: 120px; }
   .article-content .edp-rank-card { padding: 18px 16px; }
   .article-content .edp-rank-title { font-size: 17px; }
   .article-content .edp-rank-cta { width: 100%; justify-content: center; padding: 13px; }
@@ -890,5 +902,15 @@ const breadcrumbLD = {
   // Injecte les IDs sur les H2 pour que les liens TOC fonctionnent
   document.querySelectorAll('.article-content h2').forEach((el, i) => {
     el.id = `h2-${i}`;
+  });
+
+  // Wrapper scrollable pour les tableaux sur mobile
+  document.querySelectorAll('.article-content table').forEach(table => {
+    if (!table.closest('.table-scroll-wrapper')) {
+      const wrapper = document.createElement('div');
+      wrapper.className = 'table-scroll-wrapper';
+      table.parentNode.insertBefore(wrapper, table);
+      wrapper.appendChild(table);
+    }
   });
 </script>
