@@ -354,7 +354,7 @@ export const topicsParComplement: Record<string, TopicEntry[]> = {
 
   'bottes-compression': [
     {
-      titre: "Bottes de compression pneumatique : comment ça marche exactement ?",
+      titre: "Bottes de compression : comment ça marche exactement ?",
       type: 'conseil',
       objectif: 'Récupération sportive',
       intentionRecherche: "comment fonctionnent bottes de compression",
