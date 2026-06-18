@@ -354,6 +354,7 @@ const breadcrumbLD = {
 .article-wrap {
   background: #F9FAFB;
   padding: 40px 0 64px;
+  overflow-x: hidden;
 }
 .article-layout {
   max-width: 1060px;
@@ -363,6 +364,9 @@ const breadcrumbLD = {
   grid-template-columns: 1fr 300px;
   gap: 40px;
   align-items: start;
+}
+.article-main {
+  min-width: 0; /* empêche le grid blowout */
 }
 @media (max-width: 1024px) {
   .article-layout { grid-template-columns: 1fr; }
@@ -388,6 +392,14 @@ const breadcrumbLD = {
   font-size: 17px;
   line-height: 1.78;
   color: #374151;
+  min-width: 0;
+  overflow-x: hidden;
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+.article-content img {
+  max-width: 100%;
+  height: auto;
 }
 .article-content h2 {
   font-size: 22px;
@@ -860,9 +872,9 @@ const breadcrumbLD = {
   .article-content { font-size: 16px; }
   .article-content h2 { font-size: 19px; margin: 32px 0 12px; }
   .article-content h3 { font-size: 16px; margin: 22px 0 10px; }
-  .article-content table { display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; white-space: nowrap; }
+  .article-content table { display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; max-width: 100%; }
   .article-content table td,
-  .article-content table th { white-space: normal; min-width: 120px; }
+  .article-content table th { min-width: 100px; }
   .article-content .edp-rank-card { padding: 18px 16px; }
   .article-content .edp-rank-title { font-size: 17px; }
   .article-content .edp-rank-cta { width: 100%; justify-content: center; padding: 13px; }
