@@ -482,12 +482,13 @@ const breadcrumbLD = {
 .article-content td { border-bottom: 1px solid #E5E7EB; padding: 11px 16px; vertical-align: top; }
 .article-content tr:nth-child(even) td { background: #F9FAFB; }
 
-/* Table cards — injectés par JS sur mobile à la place des tableaux */
-.table-cards { margin: 24px 0; display: flex; flex-direction: column; gap: 10px; }
-.table-card { background: #fff; border: 1px solid #E5E7EB; border-radius: 8px; padding: 14px; display: flex; flex-direction: column; gap: 8px; }
-.table-card__item { display: flex; align-items: flex-start; gap: 10px; font-size: 14px; line-height: 1.5; }
-.table-card__label { font-weight: 700; font-size: 11px; text-transform: uppercase; letter-spacing: 0.4px; color: #6B7280; min-width: 80px; flex-shrink: 0; padding-top: 2px; }
-.table-card__value { color: #1A1A1A; flex: 1; }
+/* Table cards — :global() requis car injectés par JS (pas de scope Astro) */
+:global(.table-cards) { margin: 24px 0; }
+:global(.table-card) { border: 1px solid #E5E7EB; border-radius: 8px; overflow: hidden; margin-bottom: 10px; }
+:global(.table-card__item) { display: grid; grid-template-columns: 100px 1fr; border-bottom: 1px solid #F0F4F8; }
+:global(.table-card__item:last-child) { border-bottom: none; }
+:global(.table-card__label) { background: #F1F5F9; font-weight: 700; font-size: 11px; text-transform: uppercase; letter-spacing: 0.3px; color: #4B5563; padding: 10px 10px; border-right: 1px solid #E5E7EB; display: flex; align-items: center; }
+:global(.table-card__value) { color: #1A1A1A; padding: 10px 12px; font-size: 13px; line-height: 1.4; }
 
 /* Steps */
 .article-content ol.steps { padding-left: 0; list-style: none; }
