@@ -21,17 +21,17 @@ const MAX_LINKS_PER_ARTICLE = 8;
 
 // ── Pages piliers compléments ─────────────────────────────────────────────────
 const PILLAR_COMPLEMENTS = [
-  { expressions: ['oméga 3', 'oméga-3', 'EPA', 'DHA', 'huile de poisson', 'acides gras oméga'],            url: '/complement/omega-3' },
-  { expressions: ['magnésium', 'bisglycinate de magnésium', 'malate de magnésium', 'glycinate de magnésium'], url: '/complement/magnesium' },
-  { expressions: ['vitamine D', 'vitamine D3', 'cholécalciférol', 'carence en vitamine'],                    url: '/complement/vitamine-d' },
-  { expressions: ['collagène', 'collagène marin', 'collagène hydrolysé', 'collagène bovin'],                 url: '/complement/collagene' },
-  { expressions: ['whey', 'whey protéine', 'protéine de lactosérum', 'protéine whey'],                       url: '/complement/whey' },
-  { expressions: ['créatine', 'créatine monohydrate', 'monohydrate de créatine'],                            url: '/complement/creatine' },
-  { expressions: ['probiotiques', 'Lactobacillus', 'Bifidobacterium', 'microbiote intestinal'],              url: '/complement/probiotiques' },
-  { expressions: ['multivitamines', 'complexe vitaminé', 'complexe de vitamines'],                          url: '/complement/multivitamines' },
-  { expressions: ['ashwagandha', 'withania somnifera', 'KSM-66', 'withanolides'],                           url: '/complement/ashwagandha' },
-  { expressions: ['zinc', 'bisglycinate de zinc', 'gluconate de zinc', 'picolinate de zinc'],               url: '/complement/zinc' },
-  { expressions: ['fer', 'carence en fer', 'ferritine', 'hémoglobine', 'bisglycinate de fer'],              url: '/complement/fer' },
+  { expressions: ['oméga 3', 'oméga-3', 'EPA', 'DHA', 'huile de poisson', 'acides gras oméga', 'acides gras essentiels', 'inflammation chronique', 'anti-inflammatoire naturel', 'gestion de la douleur', 'douleurs inflammatoires'], url: '/complement/omega-3' },
+  { expressions: ['magnésium', 'bisglycinate de magnésium', 'malate de magnésium', 'glycinate de magnésium', 'récupération musculaire', 'crampes musculaires', 'courbatures', 'fatigue musculaire', 'contraction musculaire', 'récupération active', 'flux sanguin', 'tension musculaire'], url: '/complement/magnesium' },
+  { expressions: ['vitamine D', 'vitamine D3', 'cholécalciférol', 'carence en vitamine', 'système immunitaire', 'immunité'],                    url: '/complement/vitamine-d' },
+  { expressions: ['collagène', 'collagène marin', 'collagène hydrolysé', 'collagène bovin', 'tendons et ligaments', 'cartilage', 'articulations'],                 url: '/complement/collagene' },
+  { expressions: ['whey', 'whey protéine', 'protéine de lactosérum', 'protéine whey', 'synthèse protéique', 'protéines musculaires', 'apport en protéines'],       url: '/complement/whey' },
+  { expressions: ['créatine', 'créatine monohydrate', 'monohydrate de créatine', 'force musculaire', 'performance sportive', 'puissance musculaire'],              url: '/complement/creatine' },
+  { expressions: ['probiotiques', 'Lactobacillus', 'Bifidobacterium', 'microbiote intestinal', 'flore intestinale', 'santé intestinale'],                          url: '/complement/probiotiques' },
+  { expressions: ['multivitamines', 'complexe vitaminé', 'complexe de vitamines', 'carences nutritionnelles', 'apports nutritionnels'],                            url: '/complement/multivitamines' },
+  { expressions: ['ashwagandha', 'withania somnifera', 'KSM-66', 'withanolides', 'gestion du stress', 'cortisol', 'stress oxydatif', 'adaptogène'],               url: '/complement/ashwagandha' },
+  { expressions: ['zinc', 'bisglycinate de zinc', 'gluconate de zinc', 'picolinate de zinc', 'cicatrisation', 'défenses immunitaires'],                            url: '/complement/zinc' },
+  { expressions: ['fer', 'carence en fer', 'ferritine', 'hémoglobine', 'bisglycinate de fer', 'anémie', 'oxygénation musculaire'],                                url: '/complement/fer' },
 ];
 
 // ── Pages piliers récupération ────────────────────────────────────────────────
